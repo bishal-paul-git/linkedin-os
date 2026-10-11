@@ -1,0 +1,19 @@
+# Local/private runtime files
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+
+# Local CRM exports / private data
+data/
+exports/
+private/
+secrets/
+credentials/
+
+# Python / Node
+__pycache__/
+*.pyc
+node_modules/
