@@ -14,12 +14,15 @@
 
 ## V1.1 — Controlled automation
 
-- [ ] Dedicated Approval Queue
+- [x] Dedicated Approval Queue
+- [x] Approval Queue runtime controls
+- [x] Accepted-connection review instructions
+- [x] Approval executor contract
+- [x] Idempotency-key design
 - [ ] Comment discovery → draft → approval → action
 - [ ] Prospect discovery → qualification → approval → connection
-- [ ] Accepted connection → contextual DM draft → approval → send
+- [ ] Accepted connection → contextual DM draft → approval → send end-to-end test
 - [ ] Scheduled read-only review tasks
-- [ ] Reliable state transitions and idempotency
 - [ ] Browser-session recovery tests
 
 ## V1.2 — Operations
