@@ -27,6 +27,11 @@ Inbox  Prospecting  Content  CRM
        Shared CRM / State
              |
              v
+       Approval Queue
+             |
+      exact approval only
+             |
+             v
       Authorized LinkedIn
         browser session
 ```
@@ -41,6 +46,7 @@ By default:
 
 - research, reading, classification, drafting, and CRM preparation can run without approval;
 - sending DMs, connection requests, comments, reactions, posts, or other visible LinkedIn actions require explicit approval;
+- approved actions pass through a dedicated Approval Queue with idempotency checks;
 - workflows stop on CAPTCHA, verification, unusual-activity warnings, restrictions, or security checkpoints;
 - the system does not include limit evasion, account rotation, fake-human timing, or restriction bypass logic.
 
@@ -59,9 +65,14 @@ skills/
 docs/
   ARCHITECTURE.md
   CRM_SCHEMA.md
+  APPROVAL_QUEUE.md
+  AUTOMATION_WORKFLOWS.md
+  CURRENT_STATUS.md
   ROADMAP.md
 work/
   WORK_LAUNCH.md
+  ACCEPTED_CONNECTION_REVIEW.md
+  APPROVAL_EXECUTOR.md
 config/
   config.example.md
 ```
@@ -73,13 +84,14 @@ config/
 3. Load the five skills, or use the Manager plus specialist files as Work instructions.
 4. Start in **read-only mode**.
 5. Verify inbox navigation, relationship context, CRM reads/writes, and draft quality.
-6. Only then enable narrowly approved external actions.
+6. Use the Approval Queue for every external LinkedIn action.
+7. Only enable narrowly approved execution after read-only flows are reliable.
 
 The initial Work prompt is in [work/WORK_LAUNCH.md](work/WORK_LAUNCH.md).
 
 ## Status
 
-**V1 foundation**
+**V1.1 controlled-automation foundation**
 
 - [x] Multi-agent architecture
 - [x] Shared CRM contract
@@ -90,10 +102,12 @@ The initial Work prompt is in [work/WORK_LAUNCH.md](work/WORK_LAUNCH.md).
 - [x] Content skill
 - [x] CRM skill
 - [x] Manager/orchestrator skill
-- [ ] Approval Queue workflow
+- [x] Approval Queue schema and live runtime integration
+- [x] Accepted-connection review instructions
+- [x] Approval executor contract
 - [ ] Scheduled comment review workflow
-- [ ] Accepted-connection follow-up workflow
-- [ ] Connection-review workflow
+- [ ] End-to-end accepted-connection send test
+- [ ] Connection-review execution test
 - [ ] End-to-end browser reliability tests
 - [ ] Production observability and recovery
 
