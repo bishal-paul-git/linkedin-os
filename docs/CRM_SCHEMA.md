@@ -38,6 +38,22 @@ Approval states:
 
 `Timestamp | Agent | Contact ID | Name | Action | Reason | Result | Related Task | Related Opportunity | Source URL | Approval | Notes`
 
+## Approval Queue
+
+`Approval ID | Created At | Contact ID | Person | Company | Action Type | Target URL | Draft / Content | Reason | Requested By Agent | Approval State | Approved By | Approved At | Execution State | Executed At | Result | Related Task ID | Related Opportunity ID | Idempotency Key | Error / Notes`
+
+Action types:
+
+`SEND_DM | REPLY_DM | SEND_CONNECTION | ACCEPT_CONNECTION | DECLINE_CONNECTION | COMMENT | REACT | PUBLISH_POST | PUBLISH_PAGE_POST`
+
+Approval states:
+
+`PENDING | APPROVED | REJECTED | EXPIRED`
+
+Execution states:
+
+`NOT_READY | READY | RUNNING | SUCCEEDED | FAILED | BLOCKED`
+
 ## Config
 
 Recommended fields:
@@ -75,6 +91,8 @@ Recommended fields:
 - Posts / Page Posts
 - Stop On Security Warning
 - Current Test
+- Approval Queue
+- Approved Action Executor
 
 ## State rules
 
@@ -83,3 +101,5 @@ Recommended fields:
 3. Keep facts separate from inference. Prefix uncertainty with `Inference:`.
 4. `Do Not Contact` overrides prospecting and follow-up recommendations.
 5. One active owner should exist for each material relationship/task.
+6. Approval does not override Run Control.
+7. Never repeat a successful external action with the same Idempotency Key.
