@@ -19,8 +19,12 @@
 - Approval Queue Run Control entries
 - Acceptance Review workflow registration
 - Approval Executor workflow registration
+- Connection Review workflow registration
+- Connection Review qualification/dedupe rules
+- Expanded connection-state model
 - Approval Queue idempotency contract
 - Accepted-connection Work instructions
+- Connection-review Work instructions
 - Approval-executor Work instructions
 
 ## Live private runtime
@@ -37,28 +41,31 @@ The live runtime now contains:
 - LinkedIn browser session when authenticated
 - private relationship/conversation data
 
-The Approval Queue can receive drafts and decisions. External execution remains blocked until Run Control is explicitly changed.
+The Connection Review workflow may discover, qualify, update CRM state, and create `PENDING SEND_CONNECTION` queue rows. It must not send during the review.
+
+The Approved Action Executor remains blocked until explicitly enabled for a narrow test.
 
 ## Not yet production-proven
 
 The following still need end-to-end testing:
 
+- live LinkedIn discovery → qualification → queue row;
+- exact approved connection send → `INVITED` CRM update;
 - invited → accepted detection in the live browser;
 - accepted connection → contextual DM draft → queue row;
 - user approval → exact DM execution → CRM update;
 - scheduled comment review;
 - approved comment execution;
-- prospect shortlist → approval → connection request;
 - recovery after browser/session interruptions.
 
 ## Current next test
 
 Run:
 
-`accepted connection detection → contextual DM draft → Approval Queue`
+`LinkedIn search → qualify 1-5 strong/good fits → Contacts QUALIFIED → Approval Queue SEND_CONNECTION/PENDING`
 
 Keep external execution blocked.
 
-After the queue row is verified, explicitly enable the approved-action executor for a narrowly scoped test and complete:
+After those queue rows are manually reviewed and correct, explicitly enable the executor for one narrowly scoped connection test:
 
-`approve → send exact DM → mark SUCCEEDED → update CRM/activity log`
+`approve one row → send exact connection request → mark SUCCEEDED → set contact INVITED → Activity Log`
