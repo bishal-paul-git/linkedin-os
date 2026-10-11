@@ -17,10 +17,13 @@
 - [x] Dedicated Approval Queue
 - [x] Approval Queue runtime controls
 - [x] Accepted-connection review instructions
+- [x] Connection-review instructions
+- [x] Connection-review qualification and dedupe rules
 - [x] Approval executor contract
 - [x] Idempotency-key design
+- [ ] Live prospect discovery → qualification → approval queue test
+- [ ] Approved connection request → INVITED state test
 - [ ] Comment discovery → draft → approval → action
-- [ ] Prospect discovery → qualification → approval → connection
 - [ ] Accepted connection → contextual DM draft → approval → send end-to-end test
 - [ ] Scheduled read-only review tasks
 - [ ] Browser-session recovery tests
