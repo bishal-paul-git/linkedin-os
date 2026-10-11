@@ -2,13 +2,13 @@
 
 The Approval Queue is the control plane for external LinkedIn actions.
 
-## Purpose
+## Runtime status
 
-Keep research/drafting automated while making visible LinkedIn actions explicit, reviewable, and auditable.
+Implemented in the live private Shared CRM. Public repositories should contain the schema and workflow rules only, never private approval rows or relationship data.
 
-## Recommended fields
+## Fields
 
-`Approval ID | Contact ID | Person | Action Type | Target URL | Draft / Content | Reason | Requested By Agent | Created At | Approval State | Approved By | Approved At | Execution State | Executed At | Result | Error / Notes`
+`Approval ID | Created At | Contact ID | Person | Company | Action Type | Target URL | Draft / Content | Reason | Requested By Agent | Approval State | Approved By | Approved At | Execution State | Executed At | Result | Related Task ID | Related Opportunity ID | Idempotency Key | Error / Notes`
 
 ## Action types
 
@@ -30,17 +30,42 @@ Keep research/drafting automated while making visible LinkedIn actions explicit,
 
 `NOT_READY | READY | RUNNING | SUCCEEDED | FAILED | BLOCKED`
 
-## Rules
+## Creation rules
 
 1. External actions enter as `PENDING`.
-2. The approval record must contain the exact proposed content/action.
-3. Approval applies only to that row/action unless the user explicitly authorizes a defined batch.
-4. Editing the content after approval invalidates the approval unless the edit is purely non-substantive and the user has explicitly allowed that behavior.
-5. Before execution, re-check Run Control and relevant CRM state.
-6. Do not execute if the relationship state changed materially since approval.
-7. Record success/failure and update the relevant contact/task/activity state.
-8. Stop execution on LinkedIn security warnings or restrictions.
+2. Store the exact proposed content/action and target URL.
+3. Link the Contact ID and related task/opportunity where known.
+4. Record the requesting workflow.
+5. Generate one stable Idempotency Key for the exact action.
+6. Set Execution State to `NOT_READY`.
+7. A workflow must never self-approve its own row.
+
+## Approval rules
+
+1. Approval applies only to the exact row/action unless the user explicitly authorizes a defined batch.
+2. Editing substantive content after approval invalidates the approval.
+3. Approval does not override Run Control.
+4. Security restrictions always override approval.
+
+## Execution rules
+
+Before execution:
+
+1. re-read Run Control;
+2. require `Approval State = APPROVED`;
+3. confirm that action class is currently permitted;
+4. re-check current relationship state;
+5. verify exact approved content;
+6. confirm no earlier `SUCCEEDED` row has the same Idempotency Key.
+
+Then:
+
+- set `RUNNING` immediately before the action;
+- perform only the exact approved action;
+- on success set `SUCCEEDED`, record timestamp/result, and update CRM/activity history;
+- on ordinary failure set `FAILED`;
+- on LinkedIn security/restriction/verification issues set `BLOCKED` and stop the workflow.
 
 ## Idempotency
 
-Each approved action should have a stable Approval ID and execution guard so a scheduled Work run cannot perform the same action twice.
+Every external action needs a stable Idempotency Key. A Work run must not repeat an action if an earlier successful row has the same key.
