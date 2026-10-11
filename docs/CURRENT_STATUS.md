@@ -15,36 +15,50 @@
 - Approval policy
 - LinkedIn/browser safety rules
 - Stage 1 Work launch flow
+- Live Approval Queue tab in the private Shared CRM
+- Approval Queue Run Control entries
+- Acceptance Review workflow registration
+- Approval Executor workflow registration
+- Approval Queue idempotency contract
+- Accepted-connection Work instructions
+- Approval-executor Work instructions
 
-## Live private components
+## Live private runtime
 
 The production CRM and Work session are intentionally not stored in this public repository.
 
-Private runtime components should include:
+The live runtime now contains:
 
-- live Shared CRM
-- user-specific Config values
-- Run Control state
+- Shared CRM
+- user-specific Config
+- Run Control
 - Agent Registry
-- LinkedIn browser session
+- Approval Queue
+- LinkedIn browser session when authenticated
 - private relationship/conversation data
+
+The Approval Queue can receive drafts and decisions. External execution remains blocked until Run Control is explicitly changed.
 
 ## Not yet production-proven
 
 The following still need end-to-end testing:
 
+- invited → accepted detection in the live browser;
+- accepted connection → contextual DM draft → queue row;
+- user approval → exact DM execution → CRM update;
 - scheduled comment review;
 - approved comment execution;
 - prospect shortlist → approval → connection request;
-- invited → accepted detection;
-- accepted connection → contextual DM draft → approval → send;
-- idempotent CRM updates after browser actions;
-- failure recovery after browser/session interruptions.
+- recovery after browser/session interruptions.
 
-## Recommended next implementation
+## Current next test
 
-Build the Approval Queue, then test one complete workflow:
+Run:
 
-`accepted connection → draft DM → approve → send → CRM update`
+`accepted connection detection → contextual DM draft → Approval Queue`
 
-Only after that is reliable should broader scheduled workflows be enabled.
+Keep external execution blocked.
+
+After the queue row is verified, explicitly enable the approved-action executor for a narrowly scoped test and complete:
+
+`approve → send exact DM → mark SUCCEEDED → update CRM/activity log`
