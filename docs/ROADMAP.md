@@ -2,72 +2,73 @@
 
 ## V1-V1.3 — OS + multi-tenant architecture
 
-- [x] agents
-- [x] skills
-- [x] memory/state model
+- [x] agents and skills
+- [x] memory model
 - [x] workflows
-- [x] Approval Queue model
+- [x] Approval Queue
 - [x] Run Control
-- [x] capability-aware execution
 - [x] tenant architecture
-- [x] adapter strategy
-- [x] test plan
+- [x] capability-aware adapter model
 
-## V1.4 — Product backend core
+## V1.4 — Backend core
 
 - [x] Supabase/Postgres tenant schema
-- [x] workspace/user membership model
-- [x] integration registry
-- [x] capability registry
-- [x] tenant configuration
+- [x] memberships
+- [x] integrations/capabilities
 - [x] persistent relationship memory
-- [x] Approval Queue
-- [x] workflow templates
-- [x] workflow settings
-- [x] workflow runs
+- [x] workflow engine schema
 - [x] schedules
-- [x] audit/activity log
-- [x] security events
-- [x] idempotency model
-- [x] capability resolver code
-- [x] server orchestration services
-- [x] reproducible SQL source
-- [x] performance FK indexes
-- [x] schema round-trip test
-- [x] RLS policy set prepared
-- [ ] RLS policy set enabled after explicit approval
-- [ ] encrypted secret store implementation
+- [x] audit/security events
+- [x] server orchestration contracts
+- [x] reproducible SQL
+- [x] indexes
+- [x] schema validation
+
+## V1.4.1 — Refinement/hardening
+
+- [x] network state separated from relationship stage
+- [x] normalized contact identities
+- [x] approval fingerprints
+- [x] automatic approval invalidation on content edits
+- [x] workflow-run lineage
+- [x] worker leases/heartbeat/dedupe keys
+- [x] atomic execution-claim contract
+- [x] adapter exception handling
+- [x] healthy-adapter capability selection
+- [x] default assisted capabilities
+- [x] non-recursive RLS design
+- [x] strict TypeScript workspace
+- [x] core unit tests
+- [ ] enable RLS after explicit approval
+- [ ] run authenticated RLS isolation suite
 
 ## V1.5 — Product UI + auth
 
+- [ ] Supabase repository adapter
 - [ ] Supabase Auth workspace onboarding
-- [ ] tenant bootstrap endpoint/adapter
 - [ ] dashboard/action centre
-- [ ] contacts and relationship-memory UI
-- [ ] opportunities/tasks
+- [ ] contacts/memory UI
+- [ ] opportunities/tasks UI
 - [ ] Approval Queue UI
-- [ ] workflow controls
-- [ ] workflow-run history
+- [ ] workflow controls/history
 - [ ] schedules
 - [ ] integrations/capabilities
-- [ ] security/health dashboard
+- [ ] health/security dashboard
 
 ## V1.6 — External adapters
 
 - [ ] LinkedIn identity/OAuth
-- [ ] supported LinkedIn publishing adapter
-- [ ] partner API adapters where approved
-- [ ] assisted/manual connection and messaging paths
+- [ ] supported publishing adapters
+- [ ] restricted partner adapters where approved
+- [ ] assisted/manual connection and messaging flows
 - [ ] prospect-data adapters
 - [ ] CRM/email/calendar adapters
 
 ## Production hardening
 
-- [ ] RLS isolation tests with real auth users
-- [ ] token/secret encryption
-- [ ] tenant membership/admin tests
-- [ ] approval concurrency tests
-- [ ] worker leases/idempotent jobs
+- [ ] encrypted secret store
+- [ ] approval concurrency integration tests
+- [ ] background-worker implementation
 - [ ] adapter reconnect/token-expiry tests
 - [ ] audit retention
 - [ ] backup/recovery runbook
