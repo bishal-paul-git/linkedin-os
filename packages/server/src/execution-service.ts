@@ -1,13 +1,18 @@
 import {
-  hasAlreadySucceeded,
   isExecutableApproval,
   resolveExecution,
   type LinkedInAdapter,
-} from "../../core/src/index";
-import type { PlatformRepositories } from "./repositories";
+} from "../../core/src/index.ts";
+import type { PlatformRepositories } from "./repositories.ts";
 
 export interface AdapterRegistry {
   get(adapterId: string, tenantId: string): Promise<LinkedInAdapter | null>;
+}
+
+export interface ExecutionServiceResult {
+  mode: string;
+  result: string;
+  requiresUserAction?: boolean;
 }
 
 export class ExecutionService {
@@ -20,84 +25,150 @@ export class ExecutionService {
     tenantId: string;
     approvalId: string;
     securityBlocked?: boolean;
-  }): Promise<{ mode: string; result: string; requiresUserAction?: boolean }> {
+  }): Promise<ExecutionServiceResult> {
     const approval = await this.repos.getApproval(input.tenantId, input.approvalId);
     if (!approval) throw new Error("Approval not found.");
 
-    if (!isExecutableApproval(approval)) {
-      throw new Error("Approval is not in an executable state.");
+    if (await this.repos.hasSucceededIdempotencyKey(input.tenantId, approval.idempotencyKey)) {
+      return {
+        mode: "IDEMPOTENT_SKIP",
+        result: "This idempotency key already succeeded; no duplicate action was performed.",
+      };
     }
 
-    const alreadySucceeded = await this.repos.hasSucceededIdempotencyKey(
-      input.tenantId,
-      approval.idempotencyKey,
-    );
-
-    if (hasAlreadySucceeded(approval, alreadySucceeded ? new Set([approval.idempotencyKey]) : new Set())) {
-      return { mode: "IDEMPOTENT_SKIP", result: "Already succeeded; no duplicate action performed." };
+    if (!isExecutableApproval(approval)) {
+      throw new Error("Approval is not executable or its approved content no longer matches.");
     }
 
     const runControl = await this.repos.getRunControl(input.tenantId);
     const capabilities = await this.repos.listCapabilities(input.tenantId);
+    const securityBlocked = input.securityBlocked
+      ?? await this.repos.hasBlockingSecurityEvent(input.tenantId);
+
     const decision = resolveExecution({
       action: approval,
       runControl,
       capabilities,
-      securityBlocked: input.securityBlocked,
+      securityBlocked,
     });
 
     if (!decision.allowed) {
       await this.repos.updateApproval(input.tenantId, approval.id, {
-        executionState: "BLOCKED",
+        executionState: decision.reasonCode === "SECURITY_BLOCK" ? "BLOCKED" : "NOT_READY",
         errorNotes: decision.reason,
       });
-      return { mode: decision.mode, result: decision.reason, requiresUserAction: decision.requiresUserAction };
+
+      return {
+        mode: decision.mode,
+        result: decision.reason,
+        requiresUserAction: decision.requiresUserAction,
+      };
     }
 
     if (decision.requiresUserAction || decision.mode === "AVAILABLE_ASSISTED") {
       await this.repos.updateApproval(input.tenantId, approval.id, {
         executionState: "READY",
+        errorNotes: null,
       });
+
       return {
         mode: decision.mode,
-        result: "Prepared for user-completed action.",
+        result: "Prepared for a user-completed action.",
         requiresUserAction: true,
       };
     }
 
-    if (!decision.adapter) throw new Error("Executable capability has no adapter.");
+    if (!decision.adapter) {
+      throw new Error("Executable capability has no adapter.");
+    }
 
     const adapter = await this.adapters.get(decision.adapter, input.tenantId);
-    if (!adapter) throw new Error(`Adapter ${decision.adapter} is not registered.`);
+    if (!adapter) {
+      throw new Error(`Adapter ${decision.adapter} is not registered.`);
+    }
 
-    await this.repos.updateApproval(input.tenantId, approval.id, {
-      executionState: "RUNNING",
-    });
+    const health = await adapter.healthCheck();
+    if (!health.ok) {
+      await this.repos.updateApproval(input.tenantId, approval.id, {
+        executionState: "NOT_READY",
+        errorNotes: health.reason ?? "Adapter health check failed.",
+      });
 
-    const result = await adapter.execute(approval);
+      return {
+        mode: "ADAPTER_UNHEALTHY",
+        result: health.reason ?? "Adapter health check failed.",
+      };
+    }
 
-    await this.repos.updateApproval(input.tenantId, approval.id, {
-      executionState: result.ok ? "SUCCEEDED" : result.blocked ? "BLOCKED" : "FAILED",
-      result: result.result,
-      errorNotes: result.error,
-      executedAt: result.ok ? new Date().toISOString() : undefined,
-    });
+    const claimed = await this.repos.claimApprovalForExecution(
+      input.tenantId,
+      approval.id,
+    );
 
-    await this.repos.appendActivity({
-      tenantId: input.tenantId,
-      agent: "APPROVAL_EXECUTOR",
-      action: approval.actionType,
-      reason: decision.reason,
-      result: result.ok ? "SUCCEEDED" : result.blocked ? "BLOCKED" : "FAILED",
-      approvalId: approval.id,
-      sourceUrl: approval.targetUrl,
-      metadata: result.metadata,
-    });
+    if (!claimed) {
+      return {
+        mode: "CONCURRENT_SKIP",
+        result: "The approval was already claimed, invalidated, blocked or completed.",
+      };
+    }
 
-    return {
-      mode: decision.mode,
-      result: result.result ?? (result.ok ? "Succeeded." : "Failed."),
-      requiresUserAction: false,
-    };
+    try {
+      const result = await adapter.execute(claimed);
+      const executionState = result.ok
+        ? "SUCCEEDED"
+        : result.blocked
+          ? "BLOCKED"
+          : "FAILED";
+
+      await this.repos.updateApproval(input.tenantId, claimed.id, {
+        executionState,
+        result: result.result,
+        errorNotes: result.error ?? null,
+        executedAt: result.ok ? new Date().toISOString() : null,
+      });
+
+      await this.repos.appendActivity({
+        tenantId: input.tenantId,
+        agent: "APPROVAL_EXECUTOR",
+        action: claimed.actionType,
+        reason: decision.reason,
+        result: executionState,
+        approvalId: claimed.id,
+        workflowRunId: claimed.workflowRunId ?? undefined,
+        sourceUrl: claimed.targetUrl ?? claimed.targetRef ?? undefined,
+        metadata: result.metadata,
+      });
+
+      return {
+        mode: decision.mode,
+        result: result.result ?? (result.ok ? "Succeeded." : "Failed."),
+        requiresUserAction: false,
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown adapter error.";
+
+      await this.repos.updateApproval(input.tenantId, claimed.id, {
+        executionState: "FAILED",
+        errorNotes: message,
+      });
+
+      await this.repos.appendActivity({
+        tenantId: input.tenantId,
+        agent: "APPROVAL_EXECUTOR",
+        action: claimed.actionType,
+        reason: decision.reason,
+        result: "FAILED",
+        approvalId: claimed.id,
+        workflowRunId: claimed.workflowRunId ?? undefined,
+        sourceUrl: claimed.targetUrl ?? claimed.targetRef ?? undefined,
+        metadata: { error: message },
+      });
+
+      return {
+        mode: decision.mode,
+        result: message,
+        requiresUserAction: false,
+      };
+    }
   }
 }
