@@ -4,43 +4,69 @@
 
 - [x] Manager/orchestrator
 - [x] Inbox workflow
-- [x] Prospecting workflow
+- [x] Prospecting/network workflow
 - [x] Content workflow
 - [x] CRM/memory workflow
 - [x] Shared CRM schema
+- [x] Config
+- [x] Agent Registry
 - [x] Run Control
 - [x] Approval model
-- [x] Browser safety policy
+- [x] Browser/account safety policy
 
 ## V1.1 — Controlled automation
 
 - [x] Dedicated Approval Queue
-- [x] Approval Queue runtime controls
-- [x] Accepted-connection review instructions
-- [x] Connection-review instructions
-- [x] Connection-review qualification and dedupe rules
-- [x] Approval executor contract
-- [x] Idempotency-key design
-- [ ] Live prospect discovery → qualification → approval queue test
-- [ ] Approved connection request → INVITED state test
-- [ ] Comment discovery → draft → approval → action
-- [ ] Accepted connection → contextual DM draft → approval → send end-to-end test
-- [ ] Scheduled read-only review tasks
-- [ ] Browser-session recovery tests
+- [x] Acceptance Review
+- [x] Connection Review
+- [x] Approval Executor
+- [x] Idempotency design
+- [x] Comment Review contract
+- [x] Daily operating loop
+- [x] Work execution prompts
 
-## V1.2 — Operations
+## V1.2 — Complete operating system
 
-- [ ] Audit dashboard
-- [ ] Error/restriction event log
-- [ ] Retry policy for non-LinkedIn infrastructure failures
-- [ ] Workflow health checks
-- [ ] CRM migration option to Supabase
-- [ ] Export/import utilities
+- [x] Canonical system definition
+- [x] Explicit agent definitions
+- [x] Persistent memory model
+- [x] State machine
+- [x] Master instructions
+- [x] Run-control instructions
+- [x] Approval instructions
+- [x] Handoff instructions
+- [x] Machine-readable schemas
+- [x] Runtime adapter docs
+- [x] System manifest
+- [x] Test plan
+- [x] Edge-case scenarios
+- [x] Complete-system checklist
+
+## Production proof — next
+
+- [ ] T3 live Connection Review → Approval Queue
+- [ ] T4 single approved connection → INVITED
+- [ ] T5 acceptance detection → ACCEPTED
+- [ ] T6 approved first DM → CONVERSATION STARTED
+- [ ] T7 Comment Review → Approval Queue
+- [ ] T8 single approved comment
+- [ ] T9 idempotency rerun proof
+- [ ] T10 security-stop proof
+
+## Operations
+
+- [ ] recurring Work schedules
+- [ ] automation-run registry
+- [ ] workflow health/heartbeat
+- [ ] error/restriction event dashboard
+- [ ] recovery/runbook
+- [ ] analytics/reporting layer
+- [ ] optional Supabase memory backend
 
 ## Future
 
-- [ ] Reusable onboarding/config wizard
-- [ ] Multi-user/team relationship ownership
-- [ ] Company Page workflows
-- [ ] Analytics and relationship scoring
-- [ ] Packaged native Skills when the target workspace supports them
+- [ ] reusable onboarding/config wizard
+- [ ] team/multi-user ownership
+- [ ] company Page advanced workflows
+- [ ] relationship scoring
+- [ ] packaged native ChatGPT Skills where supported
