@@ -1,4 +1,4 @@
-import type { PlatformRepositories } from "./repositories";
+import type { PlatformRepositories } from "./repositories.ts";
 
 export class WorkflowService {
   constructor(private readonly repos: PlatformRepositories) {}
@@ -8,12 +8,14 @@ export class WorkflowService {
     workflowCode: string;
     triggerType?: "MANUAL" | "SCHEDULED" | "EVENT" | "SYSTEM";
     inputSummary?: string;
+    dedupeKey?: string;
   }) {
     return this.repos.createWorkflowRun({
       tenantId: input.tenantId,
       workflowCode: input.workflowCode,
       triggerType: input.triggerType ?? "MANUAL",
       inputSummary: input.inputSummary,
+      dedupeKey: input.dedupeKey,
     });
   }
 
