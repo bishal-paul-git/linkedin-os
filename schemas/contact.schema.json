@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LinkedIn OS Contact",
+  "type": "object",
+  "required": [
+    "contact_id",
+    "name",
+    "linkedin_url",
+    "connection_status",
+    "relationship_owner"
+  ],
+  "properties": {
+    "contact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "linkedin_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "current_role": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "company": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "location": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "connection_status": {
+      "enum": [
+        "NOT CONNECTED",
+        "DISCOVERED",
+        "QUALIFIED",
+        "APPROVED",
+        "CONNECTION PREPARED",
+        "INVITED",
+        "ACCEPTED",
+        "CONVERSATION STARTED",
+        "ACTIVE",
+        "OPPORTUNITY",
+        "NOT INTERESTED",
+        "DORMANT",
+        "DO NOT CONTACT"
+      ]
+    },
+    "relationship_type": {
+      "enum": [
+        "Prospect",
+        "Client",
+        "Former Client",
+        "Partner",
+        "Potential Partner",
+        "Colleague",
+        "Supplier",
+        "Recruiter",
+        "Candidate",
+        "Investor",
+        "Industry Contact",
+        "Friend",
+        "Unknown"
+      ]
+    },
+    "relationship_owner": {
+      "type": "string"
+    },
+    "priority": {
+      "enum": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ]
+    },
+    "do_not_contact": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}
