@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LinkedIn OS Agent Handoff",
+  "type": "object",
+  "required": [
+    "contact",
+    "from",
+    "to",
+    "current_status",
+    "context",
+    "next_action",
+    "priority"
+  ],
+  "properties": {
+    "contact": {
+      "type": "string"
+    },
+    "company": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "from": {
+      "type": "string"
+    },
+    "to": {
+      "type": "string"
+    },
+    "relationship": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "current_status": {
+      "type": "string"
+    },
+    "context": {
+      "type": "string"
+    },
+    "last_action": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "user_approval": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "priority": {
+      "enum": [
+        "P0",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ]
+    },
+    "deadline": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
