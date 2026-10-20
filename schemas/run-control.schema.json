@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LinkedIn OS Run Control",
+  "type": "object",
+  "required": [
+    "system_stage",
+    "linkedin_external_actions",
+    "crm_writes",
+    "stop_on_security_warning"
+  ],
+  "properties": {
+    "system_stage": {
+      "enum": [
+        "STAGE 1 - READ ONLY",
+        "STAGE 2 - APPROVED SENDS",
+        "STAGE 3 - NETWORK ACTIONS",
+        "STAGE 4 - CONTENT ACTIONS"
+      ]
+    },
+    "linkedin_external_actions": {
+      "enum": [
+        "BLOCKED",
+        "APPROVAL REQUIRED",
+        "NARROWLY AUTHORIZED"
+      ]
+    },
+    "crm_writes": {
+      "enum": [
+        "ALLOWED",
+        "APPROVAL REQUIRED",
+        "BLOCKED"
+      ]
+    },
+    "browser_mode": {
+      "enum": [
+        "READ ONLY",
+        "INTERACTIVE"
+      ]
+    },
+    "connection_requests": {
+      "enum": [
+        "BLOCKED",
+        "APPROVAL REQUIRED"
+      ]
+    },
+    "dm_reply_sending": {
+      "enum": [
+        "BLOCKED",
+        "APPROVAL REQUIRED"
+      ]
+    },
+    "comments_reactions": {
+      "enum": [
+        "BLOCKED",
+        "APPROVAL REQUIRED"
+      ]
+    },
+    "posts_page_posts": {
+      "enum": [
+        "BLOCKED",
+        "APPROVAL REQUIRED"
+      ]
+    },
+    "approval_queue": {
+      "enum": [
+        "ACTIVE",
+        "PAUSED"
+      ]
+    },
+    "approved_action_executor": {
+      "enum": [
+        "BLOCKED",
+        "APPROVAL REQUIRED"
+      ]
+    },
+    "stop_on_security_warning": {
+      "const": "YES"
+    }
+  },
+  "additionalProperties": true
+}
