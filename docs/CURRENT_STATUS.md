@@ -1,71 +1,83 @@
 # Current Status
 
-## Built
+## System architecture — built
 
-- Five-agent architecture
-- Manager/orchestrator skill
-- Inbox/relationship skill
-- Prospecting/network skill
-- Content/engagement skill
-- CRM/memory skill
-- Shared CRM schema
-- Config contract
-- Run Control contract
-- Agent handoff contract
-- Approval policy
-- LinkedIn/browser safety rules
-- Stage 1 Work launch flow
-- Live Approval Queue tab in the private Shared CRM
-- Approval Queue Run Control entries
-- Acceptance Review workflow registration
-- Approval Executor workflow registration
-- Connection Review workflow registration
-- Connection Review qualification/dedupe rules
-- Expanded connection-state model
-- Approval Queue idempotency contract
-- Accepted-connection Work instructions
-- Connection-review Work instructions
-- Approval-executor Work instructions
+LinkedIn OS now has a complete repository-level operating model:
 
-## Live private runtime
+- canonical system definition
+- machine-readable system manifest
+- six agent definitions
+- five reusable specialist skills
+- persistent memory contract
+- state-transition model
+- master operating instructions
+- Run Control rules
+- approval rules
+- handoff rules
+- canonical workflow contracts
+- ChatGPT Work execution prompts
+- Google Sheets runtime adapter
+- Approval Queue
+- machine-readable JSON schemas
+- test plan and edge-case scenarios
+- security policy
+- system-completeness checklist
 
-The production CRM and Work session are intentionally not stored in this public repository.
+## Live private runtime — built
 
-The live runtime now contains:
+The current V1 live runtime contains:
 
 - Shared CRM
-- user-specific Config
+- Contacts
+- Conversations
+- Opportunities
+- Tasks
+- Content & Engagement
+- Activity Log
+- Config
 - Run Control
 - Agent Registry
 - Approval Queue
-- LinkedIn browser session when authenticated
-- private relationship/conversation data
+- ChatGPT Work / LinkedIn browser session when authenticated
 
-The Connection Review workflow may discover, qualify, update CRM state, and create `PENDING SEND_CONNECTION` queue rows. It must not send during the review.
+Private runtime data remains outside this public repository.
 
-The Approved Action Executor remains blocked until explicitly enabled for a narrow test.
+## Agents
 
-## Not yet production-proven
+- LinkedIn Manager
+- LinkedIn Inbox
+- LinkedIn Network
+- LinkedIn Content
+- LinkedIn CRM
+- Approval Executor
 
-The following still need end-to-end testing:
+## Workflows available
 
-- live LinkedIn discovery → qualification → queue row;
-- exact approved connection send → `INVITED` CRM update;
-- invited → accepted detection in the live browser;
-- accepted connection → contextual DM draft → queue row;
-- user approval → exact DM execution → CRM update;
-- scheduled comment review;
-- approved comment execution;
-- recovery after browser/session interruptions.
+- Inbox Review
+- Connection Review
+- Accepted Connection Review
+- Comment Review
+- Daily Run
+- Approval Executor
 
-## Current next test
+## What is production-proven vs designed
 
-Run:
+The system architecture and state/approval contracts are implemented.
 
-`LinkedIn search → qualify 1-5 strong/good fits → Contacts QUALIFIED → Approval Queue SEND_CONNECTION/PENDING`
+The remaining work is live execution proof:
 
-Keep external execution blocked.
+- prospect discovery → qualification → PENDING SEND_CONNECTION row;
+- exact approved connection request → verified INVITED state;
+- acceptance detection → ACCEPTED;
+- contextual DM draft → PENDING SEND_DM;
+- exact approved DM → CONVERSATION STARTED;
+- comment discovery/draft → PENDING COMMENT;
+- exact approved comment execution;
+- scheduled recurring Work runs;
+- browser-session recovery and observability.
 
-After those queue rows are manually reviewed and correct, explicitly enable the executor for one narrowly scoped connection test:
+## Current principle
 
-`approve one row → send exact connection request → mark SUCCEEDED → set contact INVITED → Activity Log`
+Do not broaden execution permission because the architecture is complete.
+
+Progress workflow-by-workflow through the test plan in `tests/TEST_PLAN.md`.
