@@ -1,6 +1,6 @@
-version: 1.3.0
+version: 1.4.0
 name: linkedin-os
-description: Multi-tenant, capability-aware LinkedIn relationship operating system.
+description: Multi-tenant, capability-aware LinkedIn relationship operating system with live Supabase backend core.
 
 entrypoints:
   system: SYSTEM.md
@@ -13,11 +13,25 @@ product:
   capability_matrix: product/CAPABILITY_MATRIX.md
   connector_strategy: product/CONNECTOR_STRATEGY.md
   user_journey: product/USER_JOURNEY.md
+  api_contract: product/API_CONTRACT.md
+
+database:
+  overview: database/README.md
+  tenancy_schema: database/001_tenancy_and_control.sql
+  relationship_schema: database/002_relationships_and_workflows.sql
+  rls: database/rls.sql
+  seeds: database/seed-workflows.sql
+  indexes: database/005_indexes.sql
+
+packages:
+  core: packages/core
+  server: packages/server
 
 runtime:
   capability_resolver: runtime/CAPABILITY_RESOLVER.md
   current_v1_memory: runtime/GOOGLE_SHEETS.md
   current_browser: runtime/CHATGPT_WORK.md
+  product_database: supabase-postgres
 
 controls:
   run_control: instructions/RUN_CONTROL.md
@@ -25,17 +39,16 @@ controls:
   capability_gating: instructions/CAPABILITY_GATING.md
   security: SECURITY.md
 
-schemas:
-  tenant: schemas/tenant.schema.json
-  integration: schemas/integration.schema.json
-  capability: schemas/capability.schema.json
-  contact: schemas/contact.schema.json
-  approval_action: schemas/approval-action.schema.json
-  run_control: schemas/run-control.schema.json
-  activity_event: schemas/activity-event.schema.json
-  handoff: schemas/handoff.schema.json
-
 external_actions_default: approval_required
 tenant_isolation_required: true
 capability_resolution_required: true
 security_stop_required: true
+
+implementation:
+  database_core: built
+  workflow_templates: seeded
+  core_domain_package: built
+  server_orchestration_package: built
+  rls_policy_set: prepared_pending_explicit_enable
+  external_api_adapters: later
+  product_ui: next
