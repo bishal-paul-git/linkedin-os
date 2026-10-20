@@ -1,4 +1,4 @@
-import type { PlatformRepositories } from "./repositories";
+import type { PlatformRepositories } from "./repositories.ts";
 
 export class ApprovalService {
   constructor(private readonly repos: PlatformRepositories) {}
@@ -19,8 +19,11 @@ export class ApprovalService {
     await this.repos.updateApproval(input.tenantId, input.approvalId, {
       approvalState: input.decision,
       executionState: input.decision === "APPROVED" ? "READY" : "NOT_READY",
-      approvedBy: input.userId,
-      approvedAt: new Date().toISOString(),
+      approvedBy: input.decision === "APPROVED" ? input.userId : null,
+      approvedAt: input.decision === "APPROVED" ? new Date().toISOString() : null,
+      approvedFingerprint: input.decision === "APPROVED"
+        ? approval.approvalFingerprint ?? null
+        : null,
     });
 
     await this.repos.appendActivity({
