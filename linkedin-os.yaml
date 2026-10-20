@@ -1,0 +1,64 @@
+version: 1.2.0
+name: linkedin-os
+description: Relationship-first LinkedIn operating system with persistent CRM memory and approval-gated execution.
+
+entrypoints:
+  system: SYSTEM.md
+  master_instructions: instructions/MASTER_INSTRUCTIONS.md
+  work_launch: work/WORK_LAUNCH.md
+
+agents:
+  - id: manager
+    file: agents/linkedin-manager.md
+    skill: skills/linkedin-manager/SKILL.md
+  - id: inbox
+    file: agents/linkedin-inbox.md
+    skill: skills/linkedin-inbox/SKILL.md
+  - id: network
+    file: agents/linkedin-network.md
+    skill: skills/linkedin-prospecting/SKILL.md
+  - id: content
+    file: agents/linkedin-content.md
+    skill: skills/linkedin-content/SKILL.md
+  - id: crm
+    file: agents/linkedin-crm.md
+    skill: skills/linkedin-crm/SKILL.md
+  - id: approval-executor
+    file: agents/approval-executor.md
+
+memory:
+  contract: memory/README.md
+  state_model: memory/STATE_MODEL.md
+  policy: memory/MEMORY_POLICY.md
+  current_backend: google-sheets
+
+runtime:
+  crm: runtime/GOOGLE_SHEETS.md
+  browser: runtime/CHATGPT_WORK.md
+
+workflows:
+  daily: workflows/DAILY_OPERATING_LOOP.md
+  connection_review: workflows/CONNECTION_REVIEW.md
+  acceptance_dm: workflows/ACCEPTANCE_AND_DM.md
+  comment_review: workflows/COMMENT_REVIEW.md
+  approval_executor: work/APPROVAL_EXECUTOR.md
+
+controls:
+  run_control: instructions/RUN_CONTROL.md
+  approvals: instructions/APPROVALS.md
+  handoffs: instructions/HANDOFFS.md
+  security: SECURITY.md
+
+schemas:
+  contact: schemas/contact.schema.json
+  approval_action: schemas/approval-action.schema.json
+  run_control: schemas/run-control.schema.json
+  activity_event: schemas/activity-event.schema.json
+  handoff: schemas/handoff.schema.json
+
+tests:
+  plan: tests/TEST_PLAN.md
+  scenarios: tests/SCENARIOS.md
+
+external_actions_default: approval_required
+security_stop_required: true
