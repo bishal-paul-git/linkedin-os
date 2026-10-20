@@ -4,9 +4,17 @@ create index if not exists li_capabilities_tenant_cap_idx on public.li_capabilit
 create index if not exists li_capabilities_integration_idx on public.li_capabilities(integration_id);
 create index if not exists li_agent_settings_tenant_idx on public.li_agent_settings(tenant_id, enabled);
 
-create unique index if not exists li_contacts_tenant_linkedin_url_uq on public.li_contacts(tenant_id, linkedin_url) where linkedin_url is not null;
-create index if not exists li_contacts_tenant_status_idx on public.li_contacts(tenant_id, connection_status, priority);
+create unique index if not exists li_contacts_tenant_linkedin_url_uq
+  on public.li_contacts(tenant_id, linkedin_url)
+  where linkedin_url is not null;
+create index if not exists li_contacts_tenant_network_idx on public.li_contacts(tenant_id, network_state, priority);
+create index if not exists li_contacts_tenant_relationship_idx on public.li_contacts(tenant_id, relationship_stage, priority);
 create index if not exists li_contacts_tenant_company_idx on public.li_contacts(tenant_id, company);
+
+create unique index if not exists li_contact_identities_unique
+  on public.li_contact_identities(tenant_id, identity_type, coalesce(provider,''), external_id);
+create index if not exists li_contact_identities_contact_idx
+  on public.li_contact_identities(contact_id, identity_type);
 
 create index if not exists li_conversations_tenant_contact_idx on public.li_conversations(tenant_id, contact_id, occurred_at desc);
 create index if not exists li_conversations_contact_idx on public.li_conversations(contact_id);
@@ -24,6 +32,7 @@ create index if not exists li_approval_approved_by_idx on public.li_approval_que
 create index if not exists li_approval_contact_idx on public.li_approval_queue(contact_id);
 create index if not exists li_approval_opp_idx on public.li_approval_queue(opportunity_id);
 create index if not exists li_approval_task_idx on public.li_approval_queue(task_id);
+create index if not exists li_approval_workflow_run_idx on public.li_approval_queue(workflow_run_id);
 
 create index if not exists li_memory_tenant_subject_idx on public.li_memory_facts(tenant_id, subject_type, contact_id, fact_key);
 create index if not exists li_memory_contact_idx on public.li_memory_facts(contact_id);
@@ -33,13 +42,24 @@ create index if not exists li_activity_approval_idx on public.li_activity_log(ap
 create index if not exists li_activity_contact_idx on public.li_activity_log(contact_id);
 create index if not exists li_activity_opp_idx on public.li_activity_log(related_opportunity_id);
 create index if not exists li_activity_task_idx on public.li_activity_log(related_task_id);
+create index if not exists li_activity_workflow_run_idx on public.li_activity_log(workflow_run_id);
 
 create index if not exists li_workflow_runs_tenant_idx on public.li_workflow_runs(tenant_id, workflow_code, created_at desc);
 create index if not exists li_workflow_runs_workflow_idx on public.li_workflow_runs(workflow_code);
+create unique index if not exists li_workflow_runs_dedupe_uq
+  on public.li_workflow_runs(tenant_id, dedupe_key)
+  where dedupe_key is not null;
+create index if not exists li_workflow_runs_lease_idx
+  on public.li_workflow_runs(status, lease_expires_at)
+  where status in ('QUEUED','RUNNING');
+
 create index if not exists li_workflow_settings_workflow_idx on public.li_workflow_settings(workflow_code);
 create index if not exists li_schedules_due_idx on public.li_schedules(enabled, next_run_at) where enabled = true;
 create index if not exists li_schedules_tenant_idx on public.li_schedules(tenant_id);
 create index if not exists li_schedules_workflow_idx on public.li_schedules(workflow_code);
+
 create index if not exists li_security_tenant_idx on public.li_security_events(tenant_id, occurred_at desc, severity);
 create index if not exists li_security_integration_idx on public.li_security_events(integration_id);
+create index if not exists li_security_workflow_run_idx on public.li_security_events(workflow_run_id);
+
 create index if not exists li_tenants_created_by_idx on public.li_tenants(created_by);
