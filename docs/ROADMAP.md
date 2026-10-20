@@ -1,72 +1,74 @@
 # Roadmap
 
-## V1 — Foundation
+## V1-V1.2 — Core OS
 
-- [x] Manager/orchestrator
-- [x] Inbox workflow
-- [x] Prospecting/network workflow
-- [x] Content workflow
-- [x] CRM/memory workflow
-- [x] Shared CRM schema
-- [x] Config
-- [x] Agent Registry
+- [x] agents
+- [x] skills
+- [x] memory/state model
+- [x] CRM schema
 - [x] Run Control
-- [x] Approval model
-- [x] Browser/account safety policy
+- [x] Approval Queue
+- [x] workflows
+- [x] idempotency
+- [x] safety
+- [x] tests
+- [x] Work prompts
 
-## V1.1 — Controlled automation
+## V1.3 — Reusable multi-tenant architecture
 
-- [x] Dedicated Approval Queue
-- [x] Acceptance Review
-- [x] Connection Review
-- [x] Approval Executor
-- [x] Idempotency design
-- [x] Comment Review contract
-- [x] Daily operating loop
-- [x] Work execution prompts
+- [x] tenant model
+- [x] tenant isolation
+- [x] tenant onboarding
+- [x] connector strategy
+- [x] capability matrix
+- [x] capability resolver
+- [x] capability gating
+- [x] tenant/integration/capability schemas
+- [x] official-vs-assisted execution model
 
-## V1.2 — Complete operating system
+## V1.4 — Product backend
 
-- [x] Canonical system definition
-- [x] Explicit agent definitions
-- [x] Persistent memory model
-- [x] State machine
-- [x] Master instructions
-- [x] Run-control instructions
-- [x] Approval instructions
-- [x] Handoff instructions
-- [x] Machine-readable schemas
-- [x] Runtime adapter docs
-- [x] System manifest
-- [x] Test plan
-- [x] Edge-case scenarios
-- [x] Complete-system checklist
+- [ ] Supabase/Postgres tenant schema
+- [ ] row-level security
+- [ ] workspace/user membership
+- [ ] encrypted integration store
+- [ ] LinkedIn OAuth onboarding
+- [ ] capability detection service
+- [ ] adapter registry
+- [ ] workflow runs
+- [ ] scheduled jobs
+- [ ] audit/security events
+- [ ] approval API
+- [ ] idempotent execution service
 
-## Production proof — next
+## V1.5 — Product UI
 
-- [ ] T3 live Connection Review → Approval Queue
-- [ ] T4 single approved connection → INVITED
-- [ ] T5 acceptance detection → ACCEPTED
-- [ ] T6 approved first DM → CONVERSATION STARTED
-- [ ] T7 Comment Review → Approval Queue
-- [ ] T8 single approved comment
-- [ ] T9 idempotency rerun proof
-- [ ] T10 security-stop proof
+- [ ] onboarding wizard
+- [ ] integrations page
+- [ ] capability/status page
+- [ ] CRM/contact view
+- [ ] action centre
+- [ ] Approval Queue UI
+- [ ] workflow/schedule controls
+- [ ] run/activity log
+- [ ] health/blockers dashboard
 
-## Operations
+## V1.6 — LinkedIn integrations
 
-- [ ] recurring Work schedules
-- [ ] automation-run registry
-- [ ] workflow health/heartbeat
-- [ ] error/restriction event dashboard
-- [ ] recovery/runbook
-- [ ] analytics/reporting layer
-- [ ] optional Supabase memory backend
+- [ ] OpenID Connect identity
+- [ ] supported member social publishing adapter
+- [ ] Community Management/Page adapter where approved
+- [ ] restricted partner adapters when approved
+- [ ] assisted connection/inbox/message flows where official access is unavailable
+- [ ] licensed prospect-data adapters
 
-## Future
+## Production proof
 
-- [ ] reusable onboarding/config wizard
-- [ ] team/multi-user ownership
-- [ ] company Page advanced workflows
-- [ ] relationship scoring
-- [ ] packaged native ChatGPT Skills where supported
+- [ ] tenant isolation tests
+- [ ] adapter permission tests
+- [ ] capability fallback tests
+- [ ] approval/execution tests
+- [ ] idempotency tests
+- [ ] security-stop tests
+- [ ] reconnect/token-expiry tests
+- [ ] schedule reliability tests
