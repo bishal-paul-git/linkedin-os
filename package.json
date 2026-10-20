@@ -1,20 +1,12 @@
 {
-  "name": "linkedin-os",
-  "version": "1.4.1",
-  "private": true,
-  "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "node --experimental-transform-types --test packages/core/src/capability-resolver.test.ts packages/core/src/state-machine.test.ts packages/core/src/approval.test.ts packages/server/src/execution-service.test.ts",
-    "check": "npm run typecheck && npm test"
+  "name":"linkedin-os","version":"1.5.0","private":true,"type":"module",
+  "workspaces":["packages/*","apps/*"],
+  "scripts":{
+    "typecheck":"tsc -p tsconfig.json --noEmit",
+    "test":"node --experimental-transform-types --test packages/core/src/capability-resolver.test.ts packages/core/src/state-machine.test.ts packages/core/src/approval.test.ts packages/server/src/execution-service.test.ts",
+    "check":"npm run typecheck && npm test",
+    "build:web":"npm run build --workspace @linkedin-os/web"
   },
-  "devDependencies": {
-    "typescript": "^5.8.3"
-  },
-  "engines": {
-    "node": ">=22.6"
-  }
+  "devDependencies":{"typescript":"5.9.3"},
+  "engines":{"node":">=22.6"}
 }

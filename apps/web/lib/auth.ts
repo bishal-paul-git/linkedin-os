@@ -1,0 +1,1 @@
+import{redirect}from"next/navigation";import{createClient}from"@/lib/supabase/server";export async function currentUser(){const s=await createClient();const{data,error}=await s.auth.getUser();return error?null:data.user}export async function requireUser(){const u=await currentUser();if(!u)redirect("/login");return u}
