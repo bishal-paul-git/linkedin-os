@@ -1,0 +1,10 @@
+{
+  "default_external_action_policy": "APPROVAL_REQUIRED",
+  "writing_style": "Short, clear, human, conversational",
+  "company_page_voice": "Professional, clear, useful, concise",
+  "quality_rule": "Relevance over volume",
+  "follow_up_rule": "Follow up only for a genuine contextual reason",
+  "comment_rule": "Comment only when there is something specific and useful to add",
+  "connection_note_policy": "Optional; only when specific context adds value",
+  "account_safety_rule": "Stop on verification, restriction, CAPTCHA, unusual activity or security warning"
+}
