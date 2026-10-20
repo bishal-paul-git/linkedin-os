@@ -2,7 +2,7 @@
 -- This file is intentionally idempotent so policy revisions can be reapplied safely.
 
 create schema if not exists li_private;
-revoke all on schema li_private from public, anon, authenticated;
+revoke all on schema li_private from public, anon, authenticated;\ngrant usage on schema li_private to authenticated;
 
 create or replace function li_private.current_tenant_role(p_tenant_id uuid)
 returns text
