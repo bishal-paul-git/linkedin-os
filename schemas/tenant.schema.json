@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LinkedIn OS Tenant",
+  "type": "object",
+  "required": [
+    "tenant_id",
+    "name",
+    "timezone",
+    "status"
+  ],
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "organization": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timezone": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "ACTIVE",
+        "PAUSED",
+        "SUSPENDED",
+        "ONBOARDING"
+      ]
+    },
+    "default_approval_policy": {
+      "enum": [
+        "APPROVAL_REQUIRED",
+        "READ_ONLY",
+        "NARROWLY_AUTHORIZED"
+      ]
+    },
+    "memory_backend": {
+      "enum": [
+        "GOOGLE_SHEETS",
+        "SUPABASE",
+        "POSTGRES",
+        "CRM_ADAPTER"
+      ]
+    },
+    "created_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}
