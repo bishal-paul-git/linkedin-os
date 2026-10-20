@@ -1,92 +1,56 @@
 # Current Status
 
-## v1.4 backend core — implemented
+## v1.4.1 backend refinement — implemented
 
-LinkedIn OS is now more than an architecture repository. The reusable product backend core exists in both source control and a live Supabase/Postgres development runtime.
+The reusable LinkedIn OS backend core exists in both source control and the live `bishal-os` Supabase development runtime.
 
-### Live database core
+## Refinements completed
 
-Implemented tenant-scoped tables for:
+- split factual `network_state` from `relationship_stage`;
+- added normalized `li_contact_identities`;
+- added approval fingerprints and automatic invalidation after substantive edits;
+- added workflow-run lineage to approvals/activity/security events;
+- added worker dedupe keys, leases, attempts and heartbeats;
+- added automatic `updated_at` triggers;
+- added atomic-claim contract for external-action execution;
+- hardened execution handling for concurrency, adapter failures and temporary policy blocks;
+- refined capability selection to require healthy official adapters;
+- added safe assisted-mode defaults for tenants without external APIs;
+- rewrote pending RLS around private non-exposed membership helpers to avoid recursive policies;
+- restricted client approval decisions to tenant admins/owners in the pending RLS design;
+- added a real TypeScript workspace and executable tests;
+- aligned agents, skills, workflows and CRM docs with the refined state model.
 
-- profiles
-- tenants/workspaces
-- tenant memberships
-- integrations
-- capabilities
-- tenant configuration
-- Run Control
-- agent settings
-- contacts
-- conversations
-- opportunities
-- tasks
-- content/engagement
-- Approval Queue
-- long-term memory facts
-- activity log
-- workflow templates
-- workflow settings
-- workflow runs
-- schedules
-- security events
+## Live validation completed
 
-Six default workflow templates are seeded.
+- full schema round-trip test;
+- approval edit invalidation test;
+- workflow dedupe-key test;
+- temporary test data cleaned up after validation.
 
-A full schema round-trip test passed across tenant, run-control, agent, workflow, contact, approval and activity records with cascade cleanup.
+## Security state
 
-### Code core
+The LinkedIn OS tables are still not exposed to `anon` or `authenticated` clients.
 
-Implemented provider-independent TypeScript packages:
+The refined tenant RLS policy set is prepared in `database/rls.sql`, but remains unapplied pending explicit approval.
 
-- `@linkedin-os/core`
-  - capability resolver
-  - state machine
-  - approval/idempotency helpers
-  - adapter contracts
-  - memory-store contract
+That means the backend schema is safe for server-side development but the future frontend should not be connected directly yet.
 
-- `@linkedin-os/server`
-  - tenant bootstrap service
-  - approval decision service
-  - workflow run service
-  - capability-aware execution service
-  - repository interfaces
-  - adapter registry contract
+## Still intentionally pending
 
-### Reproducible database source
+- RLS enable + real authenticated isolation tests;
+- encrypted secret store;
+- actual repository implementation against Supabase client/server runtime;
+- web authentication/onboarding;
+- product dashboard;
+- external LinkedIn/prospect/CRM adapters.
 
-The repository now includes database build scripts, indexes, workflow seeds and the prepared RLS policy set.
+## Current next build
 
-### Security state
+After RLS approval:
 
-The new LinkedIn OS tables have direct `anon` and `authenticated` grants revoked, so they are not exposed through client APIs while tenant RLS is pending.
-
-The complete tenant-scoped RLS policy set is prepared in `database/rls.sql`.
-
-Per Supabase's security guard, enabling RLS is being held as an explicit approval step rather than being silently applied.
-
-### What is intentionally not connected yet
-
-External adapters are not required for the core to exist.
-
-Still to connect later:
-
-- LinkedIn OAuth/API
-- partner APIs where available
-- prospect-data providers
-- Google Sheets import/export
-- email/calendar/CRM adapters
-- scheduling worker provider
-
-### Next build layer
-
-After RLS is explicitly enabled, the next product layer is:
-
-- authentication/workspace onboarding
-- web dashboard
-- contacts/CRM UI
-- Approval Queue UI
-- workflows/run history
-- integrations/capability page
-- schedules/settings
-- health/security view
+1. enable tenant RLS;
+2. test owner/admin/member/viewer isolation with real auth contexts;
+3. implement Supabase repository adapter;
+4. build auth + workspace onboarding;
+5. build the product dashboard and Approval Queue UI.
