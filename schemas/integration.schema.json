@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LinkedIn OS Integration",
+  "type": "object",
+  "required": [
+    "integration_id",
+    "tenant_id",
+    "adapter",
+    "status",
+    "capabilities"
+  ],
+  "properties": {
+    "integration_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "adapter": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "CONNECTED",
+        "DEGRADED",
+        "DISCONNECTED",
+        "EXPIRED",
+        "ERROR"
+      ]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "auth_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "expires_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "requires_user_reauth": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}
