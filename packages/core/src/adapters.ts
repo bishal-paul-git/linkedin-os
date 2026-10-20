@@ -1,4 +1,4 @@
-import type { ApprovalAction, Capability, TenantId } from "./types";
+import type { ApprovalAction, Capability, TenantId } from "./types.ts";
 
 export interface ExecutionResult {
   ok: boolean;
