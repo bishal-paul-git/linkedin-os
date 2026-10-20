@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LinkedIn OS Activity Event",
+  "type": "object",
+  "required": [
+    "timestamp",
+    "agent",
+    "action",
+    "result"
+  ],
+  "properties": {
+    "timestamp": {
+      "type": "string"
+    },
+    "agent": {
+      "type": "string"
+    },
+    "contact_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "action": {
+      "type": "string"
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "result": {
+      "type": "string"
+    },
+    "related_task": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "related_opportunity": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "approval": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}
