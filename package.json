@@ -1,0 +1,20 @@
+{
+  "name": "linkedin-os",
+  "version": "1.4.1",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --experimental-strip-types --test packages/core/src/capability-resolver.test.ts packages/core/src/state-machine.test.ts packages/core/src/approval.test.ts packages/server/src/execution-service.test.ts",
+    "check": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}
