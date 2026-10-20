@@ -1,8 +1,9 @@
 {
   "name": "@linkedin-os/server",
+  "version": "1.4.1",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@linkedin-os/core": "workspace:*"
+    "@linkedin-os/core": "file:../core"
   }
 }
