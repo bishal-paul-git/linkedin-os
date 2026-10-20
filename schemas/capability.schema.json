@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LinkedIn OS Capability",
+  "type": "object",
+  "required": [
+    "tenant_id",
+    "capability",
+    "mode",
+    "can_execute"
+  ],
+  "properties": {
+    "tenant_id": {
+      "type": "string"
+    },
+    "capability": {
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "AVAILABLE_OFFICIAL",
+        "AVAILABLE_ASSISTED",
+        "AVAILABLE_BROWSER_READ",
+        "RESTRICTED_PARTNER",
+        "UNAVAILABLE",
+        "BLOCKED_BY_POLICY"
+      ]
+    },
+    "adapter": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "can_execute": {
+      "type": "boolean"
+    },
+    "requires_user_action": {
+      "type": "boolean"
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
