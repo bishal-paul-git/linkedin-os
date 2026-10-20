@@ -1,32 +1,35 @@
 # LinkedIn OS — System Definition
 
-LinkedIn OS is a relationship operating system for LinkedIn work.
+LinkedIn OS is a reusable, multi-tenant relationship operating system for LinkedIn work.
 
-It is not one bot. It is a coordinated set of specialist agents, shared memory, workflow instructions, approval controls, and browser-execution rules.
+It is not one bot and it is not tied to one person's LinkedIn account. The same shared system can serve many users while each user keeps isolated configuration, memory, integrations, approvals, and credentials.
 
 ## System layers
 
-1. **Agents** — decide who owns each kind of work.
-2. **Skills** — reusable execution playbooks for each agent.
-3. **Memory** — persistent relationship and workflow state.
-4. **Instructions** — global operating rules that every agent follows.
-5. **Workflows** — event-driven operating procedures.
-6. **Approval Queue** — control boundary for visible LinkedIn actions.
-7. **Run Control** — runtime permissions and stage gates.
-8. **Tests** — prove each workflow before broader automation.
+1. Tenant
+2. Agents
+3. Skills
+4. Memory
+5. Instructions
+6. Workflows
+7. Capability Resolver
+8. Approval Queue
+9. Run Control
+10. Adapters
+11. Tests
 
 ## Source-of-truth order
 
-When instructions conflict, use this precedence:
-
-1. current explicit user instruction;
-2. live Run Control;
-3. live Approval Queue state;
-4. Do Not Contact / relationship safety state;
-5. master system instructions;
-6. agent definition;
-7. skill/workflow instructions;
-8. defaults.
+1. current explicit user instruction
+2. tenant identity and isolation boundary
+3. live Run Control
+4. live Approval Queue state
+5. Do Not Contact / relationship safety state
+6. current tenant capability state
+7. master system instructions
+8. agent definition
+9. skill/workflow instructions
+10. defaults
 
 No lower layer may silently override a higher layer.
 
@@ -39,43 +42,35 @@ No lower layer may silently override a higher layer.
 - LinkedIn CRM
 - Approval Executor
 
+## Multi-tenant rule
+
+Every runtime operation resolves one tenant before reading or writing memory.
+
+Each tenant owns private memory, configuration, connected adapters, OAuth/session credentials, approvals, Run Control, schedules, and audit logs.
+
+No cross-tenant relationship data or credentials may be mixed.
+
 ## Memory
 
-The live CRM is the operational memory. The repository defines the memory contract, not private relationship data.
+The tenant memory backend is the operational source of truth. The repository defines the memory contract, not private relationship data.
 
-Memory stores:
+Memory stores identity, relationship state, conversation summaries, commitments, opportunities, tasks, approval state, engagement state, execution history, integration/capability state, run state, and blockers.
 
-- identity and profile URL;
-- relationship type and status;
-- conversation summaries;
-- commitments;
-- opportunities;
-- next actions;
-- task ownership;
-- approval state;
-- content engagement;
-- execution history;
-- run state and safety blockers.
+## Capability-aware execution
+
+Before an external action, the Capability Resolver selects one of:
+
+- official API execution
+- assisted/manual final action
+- read-only
+- unavailable/restricted
+
+The system must never claim automation where the tenant lacks an authorized execution path.
 
 ## External-action boundary
 
-Research, reading, classification, qualification, drafting, and CRM writes can be autonomous when Run Control permits.
+Research, classification, qualification, drafting, memory updates, and approval preparation can run autonomously when Run Control permits.
 
-Visible LinkedIn actions are approval-gated by default.
+Visible LinkedIn actions are approval-gated by default and must also pass capability checks.
 
-No action is considered complete until visible success is verified.
-
-## Product principle
-
-The system should be able to answer, at any time:
-
-- Who is this person?
-- Why are they relevant?
-- What is our relationship?
-- What happened last?
-- What have we promised?
-- What should happen next?
-- Who owns the next action?
-- Does it need approval?
-- Has this exact action already happened?
-- Is LinkedIn currently safe to operate?
+No action is complete until success is reconciled and persisted.
