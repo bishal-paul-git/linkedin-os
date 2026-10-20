@@ -1,6 +1,9 @@
 {
   "name": "@linkedin-os/core",
+  "version": "1.4.1",
   "private": true,
   "type": "module",
-  "exports": "./src/index.ts"
+  "exports": {
+    ".": "./src/index.ts"
+  }
 }
