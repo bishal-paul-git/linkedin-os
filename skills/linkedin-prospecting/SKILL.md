@@ -13,73 +13,42 @@ Own new-person discovery, qualification, connection strategy, approval-queue pre
 
 ## Intake
 
-Use explicit:
-
-- target industry
-- company list or company type
-- ICP/persona
-- role/seniority
-- geography
-- named person
-- partner type
-- problem/use case
-- result limit
+Use explicit target industry, company/company type, ICP/persona, role/seniority, geography, partner type, problem/use case, named accounts/people, and result limit.
 
 Do not silently broaden hard filters.
 
 ## Workflow
 
-1. Read user configuration and Run Control.
-2. Search LinkedIn or available people sources.
-3. Evaluate current role, company, seniority, functional relevance, industry, location, company fit, reason the relationship matters, and evidence.
-4. Check CRM/LinkedIn state for existing connection, past conversation, client/partner status, exclusions, do-not-contact, current owner, prior invitation, or an existing queue row.
-5. Reject duplicates and weak fits.
-6. Group candidates as Strong Fit, Good Fit, Possible, or Rejected.
-7. For a new person, record `DISCOVERED`; for a real outreach fit, record `QUALIFIED`.
-8. State a genuine reason to connect and next action.
-9. Prepare a connection note only when it adds material context. Blank is acceptable.
-10. For Strong Fit / Good Fit candidates, create a `SEND_CONNECTION` Approval Queue row with `PENDING` approval and a stable idempotency key.
-11. Do not send during prospect review.
-12. Only after a real approved send succeeds, set the contact to `INVITED`.
-13. Hand accepted connections to Inbox/CRM with the original targeting context.
+1. Read tenant Config and Run Control.
+2. Resolve discovery capability/provider.
+3. Search authorized sources.
+4. Evaluate role, company, seniority, function, industry, location, company fit, and specific relationship reason.
+5. Check normalized identities and CRM history before treating the person as new.
+6. Check `network_state`, relationship stage, active owner, Do Not Contact, exclusions, prior invitation/conversation, and existing approval rows.
+7. Group candidates as Strong Fit, Good Fit, Possible, or Rejected.
+8. New relevant person: set `relationship_stage=DISCOVERED`.
+9. Real outreach fit: set `relationship_stage=QUALIFIED`.
+10. Keep `network_state` factual; do not change it because the person qualified.
+11. Prepare a connection note only when specific context adds value.
+12. Strong Fit / Good Fit: create one `SEND_CONNECTION` Approval Queue row with `PENDING / NOT_READY` and stable idempotency key.
+13. When the action is ready, `relationship_stage` may become `PREPARED`.
+14. Only verified invitation success sets `network_state=INVITED`.
+15. Hand verified connected relationships to Inbox/CRM with original targeting context.
 
-## Connection states
+## Network states
 
-`NOT CONNECTED | DISCOVERED | QUALIFIED | APPROVED | CONNECTION PREPARED | INVITED | ACCEPTED | CONVERSATION STARTED | ACTIVE | OPPORTUNITY | NOT INTERESTED | DORMANT | DO NOT CONTACT`
+`UNKNOWN | NOT_CONNECTED | INVITED | CONNECTED | DECLINED | WITHDRAWN`
 
-Never reset an existing relationship to a new-prospect state.
+## Relationship stages
+
+`DISCOVERED | QUALIFIED | APPROVED | PREPARED | ENGAGED | ACTIVE | OPPORTUNITY | NOT_INTERESTED | DORMANT`
 
 ## Queue requirements
 
-For `SEND_CONNECTION` rows include:
+For `SEND_CONNECTION` rows include Contact ID, exact target/profile reference, optional specific note, concrete reason, requesting workflow, `PENDING` approval, `NOT_READY` execution state, stable Idempotency Key, and Workflow Run ID when available.
 
-- Contact ID
-- Person
-- Company
-- Target LinkedIn URL
-- optional connection note
-- specific reason
-- Requested By Agent = `CONNECTION REVIEW`
-- Approval State = `PENDING`
-- Execution State = `NOT_READY`
-- stable Idempotency Key
-
-Do not create duplicate queue rows for the same person/action.
+Never create duplicate queue rows for the same exact action.
 
 ## Output
 
-For recommended people include:
-
-- Name
-- Role
-- Company
-- Location when useful
-- Why Fit
-- Relationship/Opportunity Rationale
-- Connection Status
-- CRM History
-- Recommended Action
-- Profile URL/source
-- Approval Queue status
-
-Keep rejected and uncertain candidates separate.
+For recommended people include Name, Role, Company, Location when useful, Fit, Why Relevant, Network State, Relationship Stage, CRM History, Recommended Action, source/profile identity, and Approval Queue status.
