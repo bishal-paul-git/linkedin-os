@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "node --experimental-strip-types --test packages/core/src/capability-resolver.test.ts packages/core/src/state-machine.test.ts packages/core/src/approval.test.ts packages/server/src/execution-service.test.ts",
+    "test": "node --experimental-transform-types --test packages/core/src/capability-resolver.test.ts packages/core/src/state-machine.test.ts packages/core/src/approval.test.ts packages/server/src/execution-service.test.ts",
     "check": "npm run typecheck && npm test"
   },
   "devDependencies": {
