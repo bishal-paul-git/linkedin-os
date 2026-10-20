@@ -1,83 +1,56 @@
 # Current Status
 
-## System architecture — built
+## v1.3 product architecture — built
 
-LinkedIn OS now has a complete repository-level operating model:
+LinkedIn OS now has a reusable multi-tenant system model rather than a single-user prompt pack.
+
+Built:
 
 - canonical system definition
-- machine-readable system manifest
-- six agent definitions
-- five reusable specialist skills
+- six agents
+- reusable skills
 - persistent memory contract
-- state-transition model
-- master operating instructions
-- Run Control rules
-- approval rules
-- handoff rules
-- canonical workflow contracts
-- ChatGPT Work execution prompts
-- Google Sheets runtime adapter
-- Approval Queue
-- machine-readable JSON schemas
-- test plan and edge-case scenarios
-- security policy
-- system-completeness checklist
-
-## Live private runtime — built
-
-The current V1 live runtime contains:
-
-- Shared CRM
-- Contacts
-- Conversations
-- Opportunities
-- Tasks
-- Content & Engagement
-- Activity Log
-- Config
+- state model
 - Run Control
-- Agent Registry
 - Approval Queue
-- ChatGPT Work / LinkedIn browser session when authenticated
+- handoff rules
+- workflows
+- Work execution prompts
+- tenant model
+- tenant isolation policy
+- tenant onboarding
+- connector strategy
+- capability matrix
+- capability resolver
+- capability gating
+- tenant/integration/capability schemas
+- test plan
+- security policy
 
-Private runtime data remains outside this public repository.
+## Important change
 
-## Agents
+The system no longer assumes every LinkedIn action is available for every user.
 
-- LinkedIn Manager
-- LinkedIn Inbox
-- LinkedIn Network
-- LinkedIn Content
-- LinkedIn CRM
-- Approval Executor
+Each tenant capability resolves to official API, assisted/manual, read-only, restricted partner, unavailable, or blocked by policy.
 
-## Workflows available
+## Current private V1 tenant
 
-- Inbox Review
-- Connection Review
-- Accepted Connection Review
-- Comment Review
-- Daily Run
-- Approval Executor
+The existing Bishal/Erudience runtime remains one tenant implementation using Google Sheets + ChatGPT Work + Approval Queue + Run Control.
 
-## What is production-proven vs designed
+## Product implementation still needed
 
-The system architecture and state/approval contracts are implemented.
+- user/workspace auth
+- tenant database
+- encrypted integration/token storage
+- LinkedIn OAuth onboarding
+- capability detection
+- adapter registry
+- background workers/schedules
+- dashboard
+- approval UI
+- tenant audit/event logs
+- product admin/billing if commercialized
 
-The remaining work is live execution proof:
+## Recommended backend
 
-- prospect discovery → qualification → PENDING SEND_CONNECTION row;
-- exact approved connection request → verified INVITED state;
-- acceptance detection → ACCEPTED;
-- contextual DM draft → PENDING SEND_DM;
-- exact approved DM → CONVERSATION STARTED;
-- comment discovery/draft → PENDING COMMENT;
-- exact approved comment execution;
-- scheduled recurring Work runs;
-- browser-session recovery and observability.
-
-## Current principle
-
-Do not broaden execution permission because the architecture is complete.
-
-Progress workflow-by-workflow through the test plan in `tests/TEST_PLAN.md`.
+For multi-user production, use Postgres/Supabase with tenant IDs and row-level security. Keep Google Sheets as an optional adapter/export.
