@@ -1,120 +1,135 @@
 # LinkedIn OS
 
-A modular, relationship-first LinkedIn operating system built around ChatGPT Work, reusable skills, a shared CRM, and approval-gated actions.
+A relationship-first LinkedIn operating system built around specialist agents, reusable skills, persistent CRM memory, approval-gated execution, and ChatGPT Work.
 
-## What it does
+## Start here
 
-LinkedIn OS separates LinkedIn work into five specialist capabilities:
+- [SYSTEM.md](SYSTEM.md) — canonical system definition
+- [linkedin-os.yaml](linkedin-os.yaml) — machine-readable manifest
+- [instructions/MASTER_INSTRUCTIONS.md](instructions/MASTER_INSTRUCTIONS.md) — global operating instructions
+- [agents/README.md](agents/README.md) — agent registry and ownership model
+- [memory/README.md](memory/README.md) — persistent memory contract
+- [workflows/README.md](workflows/README.md) — canonical workflow contracts
+- [work/BOOTSTRAP_FROM_REPO.md](work/BOOTSTRAP_FROM_REPO.md) — bootstrap ChatGPT Work from this repo
+- [tests/TEST_PLAN.md](tests/TEST_PLAN.md) — production proof plan
 
-- **LinkedIn Manager** — orchestration, priorities, approvals, safety, and one unified action queue.
-- **LinkedIn Inbox** — inbox triage, conversation context, replies, follow-ups, and accepted connections.
-- **LinkedIn Prospecting** — people discovery, qualification, connection strategy, and network handoff.
-- **LinkedIn Content** — posts, comments, replies, and relationship-aware public engagement.
-- **LinkedIn CRM** — shared memory, deduplication, tasks, opportunities, approval state, and activity history.
-
-## Architecture
+## System architecture
 
 ```text
 User / ChatGPT Work
         |
         v
 LinkedIn Manager
-   |    |    |    |
-   v    v    v    v
-Inbox  Prospecting  Content  CRM
+   |       |        |       |
+   v       v        v       v
+Inbox   Network   Content   CRM
    \       |        /       |
     \      |       /        |
-       Shared CRM / State
-             |
-             v
-       Approval Queue
-             |
-      exact approval only
-             |
-             v
-      Authorized LinkedIn
-        browser session
+        Persistent Memory
+              |
+        Approval Queue
+              |
+      Approval Executor
+              |
+        Run Control Gate
+              |
+              v
+     Authorized LinkedIn
+       browser session
 ```
 
-The CRM is the persistent source of truth. Skills read state before acting and record meaningful state changes after approved actions.
+## Agents
 
-## Safety model
+- **LinkedIn Manager** — orchestration, prioritization, conflict resolution
+- **LinkedIn Inbox** — messages, replies, follow-ups, accepted relationships
+- **LinkedIn Network** — discovery, qualification, connection strategy
+- **LinkedIn Content** — posts, comments, public engagement
+- **LinkedIn CRM** — persistent state, tasks, opportunities, dedupe, audit
+- **Approval Executor** — exact approved external actions only
 
-LinkedIn OS is intentionally not designed as a blind high-volume bot.
+## Memory
 
-By default:
+The private Shared CRM is the V1 operational memory backend.
 
-- research, reading, classification, drafting, and CRM preparation can run without approval;
-- sending DMs, connection requests, comments, reactions, posts, or other visible LinkedIn actions require explicit approval;
-- approved actions pass through a dedicated Approval Queue with idempotency checks;
-- workflows stop on CAPTCHA, verification, unusual-activity warnings, restrictions, or security checkpoints;
-- the system does not include limit evasion, account rotation, fake-human timing, or restriction bypass logic.
+It stores identity, relationship state, conversation summaries, opportunities, tasks, engagement, approvals, execution history, configuration, ownership, and Run Control.
 
-See [SECURITY.md](SECURITY.md).
+The repository defines the memory contract. Private relationship data never belongs in this public repo.
+
+## External action model
+
+Research, reading, classification, qualification, drafting, and CRM preparation can run autonomously when Run Control permits.
+
+Visible LinkedIn actions are approval-gated by default:
+
+- DMs / replies
+- connection requests and invitation decisions
+- comments / reactions
+- posts / Page posts
+- profile changes
+
+Every action uses exact approval, current Run Control, relationship-state recheck, visible-success verification, and an idempotency guard.
 
 ## Repository structure
 
 ```text
-skills/
-  linkedin-manager/
-  linkedin-inbox/
-  linkedin-prospecting/
-  linkedin-content/
-  linkedin-crm/
-  _shared/
-docs/
-  ARCHITECTURE.md
-  CRM_SCHEMA.md
-  APPROVAL_QUEUE.md
-  AUTOMATION_WORKFLOWS.md
-  CURRENT_STATUS.md
-  ROADMAP.md
-work/
-  WORK_LAUNCH.md
-  ACCEPTED_CONNECTION_REVIEW.md
-  APPROVAL_EXECUTOR.md
-config/
-  config.example.md
+agents/         Canonical agent definitions
+config/         Reusable configuration template
+docs/           Architecture, CRM, roadmap, system status
+instructions/   Global operating rules
+memory/         Persistent-memory model and state rules
+runtime/        Current Google Sheets + ChatGPT Work adapters
+schemas/        Machine-readable contracts
+skills/         Reusable agent skills
+tests/          Test plan and edge-case scenarios
+work/           ChatGPT Work execution prompts
+workflows/      Canonical workflow contracts
 ```
 
-## Quick start
+## Current workflows
 
-1. Create or connect a shared CRM using the schema in [docs/CRM_SCHEMA.md](docs/CRM_SCHEMA.md).
-2. Fill the configuration values in [config/config.example.md](config/config.example.md).
-3. Load the five skills, or use the Manager plus specialist files as Work instructions.
-4. Start in **read-only mode**.
-5. Verify inbox navigation, relationship context, CRM reads/writes, and draft quality.
-6. Use the Approval Queue for every external LinkedIn action.
-7. Only enable narrowly approved execution after read-only flows are reliable.
+- Inbox review
+- Connection review
+- Accepted connection + contextual DM
+- Comment review
+- Daily operating loop
+- Approval execution
 
-The initial Work prompt is in [work/WORK_LAUNCH.md](work/WORK_LAUNCH.md).
+## Current runtime
+
+- **CRM / memory:** Google Sheets
+- **Browser / execution:** ChatGPT Work
+- **Source control:** GitHub
+- **Approval layer:** CRM Approval Queue
+- **Permission layer:** CRM Run Control
 
 ## Status
 
-**V1.1 controlled-automation foundation**
+**v1.2.0 — complete system architecture, controlled automation under production testing**
 
-- [x] Multi-agent architecture
-- [x] Shared CRM contract
-- [x] Approval model
-- [x] Run-control model
-- [x] Inbox skill
-- [x] Prospecting skill
-- [x] Content skill
-- [x] CRM skill
-- [x] Manager/orchestrator skill
-- [x] Approval Queue schema and live runtime integration
-- [x] Accepted-connection review instructions
-- [x] Approval executor contract
-- [ ] Scheduled comment review workflow
-- [ ] End-to-end accepted-connection send test
-- [ ] Connection-review execution test
-- [ ] End-to-end browser reliability tests
-- [ ] Production observability and recovery
+Architecture and operating contracts are built. Remaining work is execution proof and operations:
+
+- live prospect discovery → queue test
+- one approved connection send
+- acceptance detection
+- one approved DM
+- comment prepare/queue + approved comment
+- recurring Work runs
+- observability / recovery
+
+See [docs/CURRENT_STATUS.md](docs/CURRENT_STATUS.md), [docs/ROADMAP.md](docs/ROADMAP.md), and [docs/COMPLETE_SYSTEM_CHECKLIST.md](docs/COMPLETE_SYSTEM_CHECKLIST.md).
+
+## Security
+
+LinkedIn OS is not designed for high-volume blind automation or evasion.
+
+It stops on CAPTCHA, identity verification, unusual activity, restrictions, or security warnings. It does not include account rotation, restriction bypass, fake-human timing, or limit probing.
+
+See [SECURITY.md](SECURITY.md).
 
 ## Public repository note
 
-This repo contains reusable instructions and schemas only. Keep live credentials, session data, private CRM URLs, client data, and account-specific secrets outside the repository.
+Keep credentials, private CRM URLs, browser/session data, LinkedIn message history, prospect lists, and client data outside this repository.
 
 ## Disclaimer
 
-This project is not affiliated with or endorsed by LinkedIn. Any browser-based use should respect LinkedIn's terms, account protections, and applicable law.
+This project is not affiliated with or endorsed by LinkedIn. Browser-based use should respect LinkedIn's terms, account protections, and applicable law.
