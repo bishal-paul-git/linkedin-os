@@ -1,10 +1,11 @@
-version: 1.4.1
+version: 1.5.0
 name: linkedin-os
-description: Multi-tenant, capability-aware LinkedIn relationship operating system with hardened Supabase backend core.
+description: Multi-tenant LinkedIn relationship operating system with live Supabase backend, auth, dashboard, approvals, scheduling and capability-aware execution.
 
 entrypoints:
   system: SYSTEM.md
   master_instructions: instructions/MASTER_INSTRUCTIONS.md
+  web_app: apps/web
 
 database:
   overview: database/README.md
@@ -14,35 +15,48 @@ database:
   relationship_refinement: database/003_relationship_model_v2.sql
   invariants: database/004_invariants_and_worker_state.sql
   indexes: database/005_indexes.sql
+  app_rpcs_scheduler: database/006_app_rpcs_and_scheduler.sql
+  execution_rpcs: database/007_execution_rpcs.sql
+  workflow_processor: database/008_internal_workflow_processor.sql
   seeds: database/seed-workflows.sql
   rls: database/rls.sql
+  tests:
+    invariants: database/tests/001_invariants.sql
+    rls_isolation: database/tests/002_rls_isolation.sql
 
 packages:
   core: packages/core
   server: packages/server
+  supabase: packages/supabase
+  web: apps/web
+
+runtime:
+  database: Supabase/Postgres
+  auth: Supabase Auth
+  web: Next.js 16 on Vercel
+  schedules: pg_cron
+  deployment: https://linkedin-os-delta.vercel.app
 
 state:
   network: "UNKNOWN | NOT_CONNECTED | INVITED | CONNECTED | DECLINED | WITHDRAWN"
   relationship: "DISCOVERED | QUALIFIED | APPROVED | PREPARED | ENGAGED | ACTIVE | OPPORTUNITY | NOT_INTERESTED | DORMANT"
 
-controls:
-  run_control: instructions/RUN_CONTROL.md
-  approvals: instructions/APPROVALS.md
-  capability_gating: instructions/CAPABILITY_GATING.md
-  security: SECURITY.md
-
 implementation:
-  database_core: built
-  relationship_model_v2: built
-  approval_fingerprints: built
-  workflow_lineage: built
-  worker_dedupe_lease_model: built
-  core_domain_package: built
-  server_orchestration_package: built
-  unit_tests: added
-  rls_policy_set: refined_pending_explicit_enable
-  external_api_adapters: later
-  product_ui: next
+  tenant_rls: enabled_and_tested
+  auth_onboarding: built
+  dashboard: built
+  contacts_memory: built
+  opportunities: built
+  approval_queue: built
+  workflows: built
+  scheduler: built
+  internal_processor: built
+  integration_registry: built
+  capability_registry: built
+  supabase_repository: built
+  security_dashboard: built
+  assisted_execution: built
+  external_api_adapters: intentionally_later
 
 external_actions_default: approval_required
 tenant_isolation_required: true

@@ -1,47 +1,53 @@
 # Database
 
-LinkedIn OS uses a tenant-scoped Postgres/Supabase core.
-
-The live development schema uses `li_*` tables so it can coexist safely with other systems in the current Supabase project.
+LinkedIn OS uses a tenant-scoped Supabase/Postgres core.
 
 ## Apply order
 
 See [ORDER.md](ORDER.md).
 
-## Core domains
+The full product database includes:
 
-- tenancy: `li_profiles`, `li_tenants`, `li_tenant_members`
-- integrations/capabilities: `li_integrations`, `li_capabilities`
-- runtime controls: `li_config`, `li_run_control`, `li_agent_settings`
-- relationship memory: `li_contacts`, `li_contact_identities`, `li_conversations`, `li_memory_facts`
-- commercial state: `li_opportunities`, `li_tasks`
-- content: `li_content_engagement`
-- approvals: `li_approval_queue`
-- workflows: `li_workflow_templates`, `li_workflow_settings`, `li_workflow_runs`, `li_schedules`
-- audit/safety: `li_activity_log`, `li_security_events`
-
-## Relationship model
-
-The product separates:
-
-- `network_state`: factual connection state;
-- `relationship_stage`: maturity of the relationship;
-- `do_not_contact`: safety/control override.
-
-The older `connection_status` field remains only for compatibility while the product moves fully to the refined model.
-
-## Approval safety
-
-Approval rows contain both current and approved fingerprints. Substantive content edits invalidate prior approval automatically.
-
-Workflow runs have dedupe keys, worker leases, attempts and heartbeats so background workers can be made idempotent.
+- tenancy and memberships
+- integration/capability registry
+- Config / Run Control / agent settings
+- contacts and normalized identities
+- conversations and memory facts
+- opportunities and tasks
+- content/engagement
+- Approval Queue
+- workflow templates/settings/runs
+- schedules
+- activity/security events
+- app-facing RPCs
+- execution/reconciliation RPCs
+- pg_cron scheduler and internal workflow processor
+- row-level security
 
 ## Security state
 
-Direct `anon` and `authenticated` grants are revoked on the LinkedIn OS tables while RLS is pending.
+RLS is enabled.
 
-The refined RLS policy set in `rls.sql` uses private security-definer membership helpers specifically to avoid recursive RLS checks. It remains intentionally unapplied until explicitly approved.
+The private-schema tenant-role helpers back policies for Owner/Admin/Member/Viewer access.
+
+Reproducible tests:
+
+- `database/tests/001_invariants.sql`
+- `database/tests/002_rls_isolation.sql`
+
+The live synthetic isolation suite passed.
+
+## Scheduling
+
+Two active pg_cron jobs run every minute:
+
+- `linkedin-os-scheduler-tick`
+- `linkedin-os-workflow-processor`
+
+The scheduler creates idempotent workflow runs. The processor completes database-only work and marks external-context workflows honestly as assisted/blocked rather than fabricating results.
 
 ## Secrets
 
-OAuth/API secrets are never stored directly in normal tables. `li_integrations.token_ref` is only a reference to a future encrypted secret store.
+OAuth/API secrets must not be stored directly in ordinary `li_*` tables.
+
+`li_integrations.token_ref` is a reference point for a future encrypted secret store/provider.

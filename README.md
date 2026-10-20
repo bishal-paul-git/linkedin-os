@@ -1,85 +1,92 @@
 # LinkedIn OS
 
-A reusable, multi-tenant LinkedIn relationship operating system with specialist agents, persistent memory, capability-aware integrations, approval-gated actions, and a live Supabase/Postgres backend core.
+A reusable, multi-tenant LinkedIn relationship operating system with specialist agents, persistent memory, approval-gated actions, capability-aware adapters, scheduling, and a live web product.
 
-## Current version
+## Current release
 
-**v1.4.1 — backend refinement release**
+**v1.5.0 — usable multi-tenant product core**
 
-The product core now includes:
+Live app:
 
-- tenant/workspace isolation;
-- persistent CRM and relationship memory;
-- separate network state and relationship stage;
-- normalized contact identities;
-- agents and workflows;
-- Run Control;
-- Approval Queue with approval fingerprints;
-- idempotency keys;
-- workflow run lineage and worker leases;
-- capability resolver;
-- official/assisted/unavailable execution modes;
-- provider-independent adapter contracts;
-- server orchestration services;
-- strict TypeScript workspace and core tests.
+https://linkedin-os-delta.vercel.app
 
-## Architecture
+Source:
+
+https://github.com/bishal-paul-git/linkedin-os
+
+## What is built
+
+- Supabase Auth + workspace onboarding
+- tenant-isolated Postgres/Supabase memory
+- Owner/Admin/Member/Viewer RLS
+- Manager, Inbox, Network, Content, CRM and Approval Executor agents
+- Contacts / relationship memory
+- Opportunities / tasks model
+- Approval Queue
+- Run Control
+- capability registry
+- integration registry
+- manual + scheduled workflow runs
+- internal pg_cron scheduler and workflow processor
+- assisted/manual completion path when an external API is not connected
+- activity log + security events
+- responsive Next.js dashboard
+- concrete Supabase repository adapter
+- idempotency, approval fingerprints, worker leases and workflow lineage
+
+## Product navigation
+
+- Action Centre
+- Contacts
+- Opportunities
+- Approvals
+- Workflows
+- Integrations & Capabilities
+- Security & Run Control
+
+## Execution model
 
 ```text
 Tenant
   ↓
-Manager
-  ├─ Inbox
-  ├─ Network
-  ├─ Content
-  └─ CRM / Memory
-        ↓
-   Workflow Run
-        ↓
-   Approval Queue
-        ↓
- Capability Resolver
-   ├─ Official adapter
-   ├─ Assisted/manual
-   └─ Unavailable/restricted
+Agents + Memory
+  ↓
+Workflow Run
+  ↓
+Approval Queue
+  ↓
+Run Control + Capability Resolver
+  ├─ Official adapter
+  ├─ Assisted/manual completion
+  └─ Blocked/unavailable
 ```
 
-## State model
+External LinkedIn APIs are intentionally not required by the core. Until an authorized adapter is connected, relevant actions remain assisted/manual and are reconciled into memory only after completion is confirmed.
 
-LinkedIn connection facts and relationship maturity are separate.
+## Security
 
-Network:
+RLS is enabled and tested. Synthetic isolation tests pass for:
 
-`UNKNOWN → NOT_CONNECTED → INVITED → CONNECTED`
+- owner sees only own tenant/data
+- member write access
+- viewer write denial
+- outsider isolation
 
-Relationship:
+Anonymous requests to protected product routes are redirected to login before tenant data is queried.
 
-`DISCOVERED → QUALIFIED → APPROVED → PREPARED → ENGAGED → ACTIVE → OPPORTUNITY`
+See:
 
-`Do Not Contact` is a separate safety flag.
-
-## Start here
-
-- [SYSTEM.md](SYSTEM.md)
-- [linkedin-os.yaml](linkedin-os.yaml)
-- [database/README.md](database/README.md)
-- [memory/STATE_MODEL.md](memory/STATE_MODEL.md)
-- [product/MULTI_TENANT_ARCHITECTURE.md](product/MULTI_TENANT_ARCHITECTURE.md)
-- [product/CAPABILITY_MATRIX.md](product/CAPABILITY_MATRIX.md)
 - [docs/CURRENT_STATUS.md](docs/CURRENT_STATUS.md)
-- [docs/ROADMAP.md](docs/ROADMAP.md)
+- [docs/AUTH_SETUP.md](docs/AUTH_SETUP.md)
+- [docs/OPERATIONS.md](docs/OPERATIONS.md)
+- [database/ORDER.md](database/ORDER.md)
 
 ## Development
 
 ```bash
 npm install
 npm run check
+npm run build:web
 ```
 
-The test command uses Node's built-in test runner with type stripping. TypeScript is used for strict source checking.
-
-## Security
-
-The live LinkedIn OS tables currently have direct client grants revoked. The refined tenant RLS policy set is prepared but intentionally not enabled without explicit approval.
-
-Never store OAuth tokens, browser sessions, private CRM records or LinkedIn messages in this public repository.
+Never commit OAuth tokens, browser sessions, private CRM data, LinkedIn messages or external-provider secrets to this repository.

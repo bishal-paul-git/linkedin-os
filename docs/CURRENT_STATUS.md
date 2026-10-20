@@ -1,70 +1,109 @@
 # Current Status
 
-## v1.4.1 backend refinement — implemented
+## v1.5.0 — live product core
 
-The reusable LinkedIn OS backend core exists in both source control and the live `bishal-os` Supabase development runtime.
+LinkedIn OS now has a usable multi-user web product on top of the previously built operating-system/backend architecture.
 
-## Refinements completed
+### Live
 
-- split factual `network_state` from `relationship_stage`;
-- added normalized `li_contact_identities`;
-- added approval fingerprints and automatic invalidation after substantive edits;
-- added workflow-run lineage to approvals/activity/security events;
-- added worker dedupe keys, leases, attempts and heartbeats;
-- added automatic `updated_at` triggers;
-- added atomic-claim contract for external-action execution;
-- hardened execution handling for concurrency, adapter failures and temporary policy blocks;
-- refined capability selection to require healthy official adapters;
-- added safe assisted-mode defaults for tenants without external APIs;
-- rewrote pending RLS around private non-exposed membership helpers to avoid recursive policies;
-- restricted client approval decisions to tenant admins/owners in the pending RLS design;
-- added a strict TypeScript workspace and executable tests;
-- aligned agents, skills, workflows and CRM docs with the refined state model.
+- Web app: https://linkedin-os-delta.vercel.app
+- Source: https://github.com/bishal-paul-git/linkedin-os
+- Supabase/Postgres backend: live
+- Vercel deployment: READY
 
-## Verification completed
+### Authentication and tenancy
 
-Live database:
+Built:
 
-- full schema round-trip passed;
-- approval edit invalidation passed;
-- workflow dedupe-key enforcement passed;
-- test records were removed after validation.
+- email/password Supabase Auth
+- protected server routes
+- workspace onboarding
+- tenant bootstrap RPC
+- Owner/Admin/Member/Viewer membership model
+- row-level security
+- per-tenant Config, Run Control, agents, workflows, capabilities and memory
 
-Code:
+RLS was applied as a recorded migration and validated with rollback-only synthetic identities.
 
-- strict TypeScript typecheck passed;
-- 10/10 unit tests passed;
-- tests cover capability routing, degraded-adapter fallback, security blocking, network/relationship transitions, stale approvals, execution concurrency and adapter exception recovery.
+Passed:
 
-Database advisor:
+- owner sees only own tenant
+- owner sees only own contacts
+- member can write own tenant
+- viewer cannot write
+- outsider sees no tenant data
 
-- no LinkedIn OS unindexed-foreign-key findings remain;
-- remaining advisor findings belong to unrelated pre-existing tables/views in the shared `bishal-os` project;
-- LinkedIn OS client access remains intentionally closed while RLS is pending.
+### Product UI
 
-## Security state
+Built:
 
-The LinkedIn OS tables are not exposed to `anon` or `authenticated` clients.
+- Action Centre
+- Contacts & Memory
+- Opportunities
+- Approval Queue
+- Workflows
+- interval schedules
+- workflow-run history
+- Integrations & Capabilities
+- Security & Run Control
+- agent status
+- security-event view
 
-The refined tenant RLS policy set is prepared in `database/rls.sql`, but remains unapplied pending explicit approval.
+### Workflow runtime
 
-That means server-side development can continue safely, but a browser/frontend should not connect directly to these tables yet.
+Built:
 
-## Still intentionally pending
+- manual workflow enqueue RPC
+- interval schedule model
+- pg_cron scheduler tick every minute
+- internal queued-run processor every minute
+- workflow dedupe keys
+- leases / heartbeat / attempts model
+- DAILY_RUN database snapshot
+- capability-aware BLOCKED/PARTIAL results for workflows requiring external context
+- Approval Executor readiness reporting
 
-- RLS enable + real authenticated isolation tests;
-- encrypted secret store;
-- concrete Supabase repository adapter;
-- web authentication/onboarding;
-- product dashboard;
-- external LinkedIn/prospect/CRM adapters.
+A rollback-only scheduler → enqueue → processor smoke test passes.
 
-## Current next build
+### External execution without APIs
 
-After RLS approval:
+The core is usable before external APIs are connected.
 
-1. enable tenant RLS;
-2. test owner/admin/member/viewer isolation with real auth contexts;
-3. implement the concrete Supabase repository adapter;
-4. build auth + workspace onboarding;
-5. build the dashboard and Approval Queue UI.
+Approval rows support:
+
+- exact content approval
+- approval fingerprints
+- stale-approval invalidation
+- idempotency
+- atomic execution claim
+- assisted/manual completion reconciliation
+
+Example:
+
+`approve SEND_CONNECTION → user completes it on LinkedIn → mark completed → Approval=SUCCEEDED → contact network_state=INVITED → Activity Log`
+
+The system does not pretend a LinkedIn action happened merely because it was prepared or approved.
+
+### Verification
+
+- core strict TypeScript check passed
+- core test suite: 10/10 passed
+- database invariant tests passed
+- RLS isolation suite passed
+- scheduler/processor smoke test passed
+- Next.js production build: READY
+- production login page: HTTP 200
+- protected anonymous route redirects to login
+- fresh Vercel runtime error window after auth hardening: no errors
+
+### Intentionally later
+
+External tool/API adapters:
+
+- LinkedIn OAuth/API
+- LinkedIn partner-only network/messaging APIs if approved
+- prospect-data providers
+- CRM/email/calendar adapters
+- optional Google Sheets import/export
+
+These plug into the existing Integration + Capability registry and do not require redesigning the core.

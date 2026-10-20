@@ -1,75 +1,67 @@
 # Roadmap
 
-## V1-V1.3 — OS + multi-tenant architecture
+## V1-V1.4.1 — completed foundation
 
 - [x] agents and skills
-- [x] memory model
-- [x] workflows
+- [x] memory/state model
+- [x] multi-tenant architecture
+- [x] Supabase/Postgres backend
+- [x] contacts, conversations, opportunities and tasks
 - [x] Approval Queue
 - [x] Run Control
-- [x] tenant architecture
-- [x] capability-aware adapter model
+- [x] capability model
+- [x] idempotency and approval fingerprints
+- [x] worker-run lineage / leases / heartbeat
+- [x] core tests
 
-## V1.4 — Backend core
+## V1.5 — usable product core
 
-- [x] Supabase/Postgres tenant schema
-- [x] memberships
-- [x] integrations/capabilities
-- [x] persistent relationship memory
-- [x] workflow engine schema
+- [x] RLS enabled
+- [x] synthetic tenant-isolation tests
+- [x] Supabase repository adapter
+- [x] Supabase Auth
+- [x] workspace onboarding
+- [x] Action Centre
+- [x] Contacts / Memory UI
+- [x] Opportunities UI
+- [x] Approval Queue UI
+- [x] Workflows UI
+- [x] manual workflow execution
 - [x] schedules
-- [x] audit/security events
-- [x] server orchestration contracts
-- [x] reproducible SQL
-- [x] indexes
-- [x] schema validation
+- [x] pg_cron scheduler
+- [x] internal workflow processor
+- [x] Integrations / Capabilities UI
+- [x] Security / Run Control UI
+- [x] assisted completion reconciliation
+- [x] Vercel production deployment
+- [x] runtime/auth hardening
 
-## V1.4.1 — Refinement/hardening
-
-- [x] network state separated from relationship stage
-- [x] normalized contact identities
-- [x] approval fingerprints
-- [x] automatic approval invalidation on content edits
-- [x] workflow-run lineage
-- [x] worker leases/heartbeat/dedupe keys
-- [x] atomic execution-claim contract
-- [x] adapter exception handling
-- [x] healthy-adapter capability selection
-- [x] default assisted capabilities
-- [x] non-recursive RLS design
-- [x] strict TypeScript workspace
-- [x] core unit tests
-- [ ] enable RLS after explicit approval
-- [ ] run authenticated RLS isolation suite
-
-## V1.5 — Product UI + auth
-
-- [ ] Supabase repository adapter
-- [ ] Supabase Auth workspace onboarding
-- [ ] dashboard/action centre
-- [ ] contacts/memory UI
-- [ ] opportunities/tasks UI
-- [ ] Approval Queue UI
-- [ ] workflow controls/history
-- [ ] schedules
-- [ ] integrations/capabilities
-- [ ] health/security dashboard
-
-## V1.6 — External adapters
+## V1.6 — external adapters
 
 - [ ] LinkedIn identity/OAuth
-- [ ] supported publishing adapters
-- [ ] restricted partner adapters where approved
-- [ ] assisted/manual connection and messaging flows
-- [ ] prospect-data adapters
+- [ ] supported LinkedIn member publishing
+- [ ] Community Management/Page adapter where approved
+- [ ] restricted partner APIs when/if approved
+- [ ] prospect-data provider
 - [ ] CRM/email/calendar adapters
+- [ ] optional Google Sheets import/export
+
+## V1.7 — product expansion
+
+- [ ] team invitation UI
+- [ ] richer contact detail timeline
+- [ ] opportunity pipeline board
+- [ ] task management UI
+- [ ] workflow builder/config editor
+- [ ] notification preferences
+- [ ] billing/plan layer if commercialized
+- [ ] admin/support tooling
 
 ## Production hardening
 
-- [ ] encrypted secret store
-- [ ] approval concurrency integration tests
-- [ ] background-worker implementation
-- [ ] adapter reconnect/token-expiry tests
-- [ ] audit retention
-- [ ] backup/recovery runbook
-- [ ] monitoring and alerts
+- [ ] encrypted external-secret store
+- [ ] adapter token refresh/reconnect tests
+- [ ] end-to-end authenticated browser test with a real test account
+- [ ] audit retention policy
+- [ ] backups/recovery runbook
+- [ ] monitoring/alerts
