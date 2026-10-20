@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LinkedIn OS Approval Action",
+  "type": "object",
+  "required": [
+    "approval_id",
+    "action_type",
+    "target_url",
+    "requested_by_agent",
+    "approval_state",
+    "execution_state",
+    "idempotency_key"
+  ],
+  "properties": {
+    "approval_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contact_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "person": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "company": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "action_type": {
+      "enum": [
+        "SEND_DM",
+        "REPLY_DM",
+        "SEND_CONNECTION",
+        "ACCEPT_CONNECTION",
+        "DECLINE_CONNECTION",
+        "COMMENT",
+        "REACT",
+        "PUBLISH_POST",
+        "PUBLISH_PAGE_POST"
+      ]
+    },
+    "target_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "draft_content": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "reason": {
+      "type": "string"
+    },
+    "requested_by_agent": {
+      "type": "string"
+    },
+    "approval_state": {
+      "enum": [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "EXPIRED"
+      ]
+    },
+    "execution_state": {
+      "enum": [
+        "NOT_READY",
+        "READY",
+        "RUNNING",
+        "SUCCEEDED",
+        "FAILED",
+        "BLOCKED"
+      ]
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "result": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "error_notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}
