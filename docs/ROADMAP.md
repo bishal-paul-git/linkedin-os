@@ -1,74 +1,74 @@
 # Roadmap
 
-## V1-V1.2 — Core OS
+## V1-V1.3 — OS + multi-tenant architecture
 
 - [x] agents
 - [x] skills
 - [x] memory/state model
-- [x] CRM schema
-- [x] Run Control
-- [x] Approval Queue
 - [x] workflows
-- [x] idempotency
-- [x] safety
-- [x] tests
-- [x] Work prompts
+- [x] Approval Queue model
+- [x] Run Control
+- [x] capability-aware execution
+- [x] tenant architecture
+- [x] adapter strategy
+- [x] test plan
 
-## V1.3 — Reusable multi-tenant architecture
+## V1.4 — Product backend core
 
-- [x] tenant model
-- [x] tenant isolation
-- [x] tenant onboarding
-- [x] connector strategy
-- [x] capability matrix
-- [x] capability resolver
-- [x] capability gating
-- [x] tenant/integration/capability schemas
-- [x] official-vs-assisted execution model
+- [x] Supabase/Postgres tenant schema
+- [x] workspace/user membership model
+- [x] integration registry
+- [x] capability registry
+- [x] tenant configuration
+- [x] persistent relationship memory
+- [x] Approval Queue
+- [x] workflow templates
+- [x] workflow settings
+- [x] workflow runs
+- [x] schedules
+- [x] audit/activity log
+- [x] security events
+- [x] idempotency model
+- [x] capability resolver code
+- [x] server orchestration services
+- [x] reproducible SQL source
+- [x] performance FK indexes
+- [x] schema round-trip test
+- [x] RLS policy set prepared
+- [ ] RLS policy set enabled after explicit approval
+- [ ] encrypted secret store implementation
 
-## V1.4 — Product backend
+## V1.5 — Product UI + auth
 
-- [ ] Supabase/Postgres tenant schema
-- [ ] row-level security
-- [ ] workspace/user membership
-- [ ] encrypted integration store
-- [ ] LinkedIn OAuth onboarding
-- [ ] capability detection service
-- [ ] adapter registry
-- [ ] workflow runs
-- [ ] scheduled jobs
-- [ ] audit/security events
-- [ ] approval API
-- [ ] idempotent execution service
-
-## V1.5 — Product UI
-
-- [ ] onboarding wizard
-- [ ] integrations page
-- [ ] capability/status page
-- [ ] CRM/contact view
-- [ ] action centre
+- [ ] Supabase Auth workspace onboarding
+- [ ] tenant bootstrap endpoint/adapter
+- [ ] dashboard/action centre
+- [ ] contacts and relationship-memory UI
+- [ ] opportunities/tasks
 - [ ] Approval Queue UI
-- [ ] workflow/schedule controls
-- [ ] run/activity log
-- [ ] health/blockers dashboard
+- [ ] workflow controls
+- [ ] workflow-run history
+- [ ] schedules
+- [ ] integrations/capabilities
+- [ ] security/health dashboard
 
-## V1.6 — LinkedIn integrations
+## V1.6 — External adapters
 
-- [ ] OpenID Connect identity
-- [ ] supported member social publishing adapter
-- [ ] Community Management/Page adapter where approved
-- [ ] restricted partner adapters when approved
-- [ ] assisted connection/inbox/message flows where official access is unavailable
-- [ ] licensed prospect-data adapters
+- [ ] LinkedIn identity/OAuth
+- [ ] supported LinkedIn publishing adapter
+- [ ] partner API adapters where approved
+- [ ] assisted/manual connection and messaging paths
+- [ ] prospect-data adapters
+- [ ] CRM/email/calendar adapters
 
-## Production proof
+## Production hardening
 
-- [ ] tenant isolation tests
-- [ ] adapter permission tests
-- [ ] capability fallback tests
-- [ ] approval/execution tests
-- [ ] idempotency tests
-- [ ] security-stop tests
-- [ ] reconnect/token-expiry tests
-- [ ] schedule reliability tests
+- [ ] RLS isolation tests with real auth users
+- [ ] token/secret encryption
+- [ ] tenant membership/admin tests
+- [ ] approval concurrency tests
+- [ ] worker leases/idempotent jobs
+- [ ] adapter reconnect/token-expiry tests
+- [ ] audit retention
+- [ ] backup/recovery runbook
+- [ ] monitoring and alerts
