@@ -1,4 +1,5 @@
 export * from "./types.ts";
+export * from "./defaults.ts";
 export * from "./capability-resolver.ts";
 export * from "./state-machine.ts";
 export * from "./approval.ts";
