@@ -4,9 +4,9 @@ import type {
   Capability,
   ExecutionDecision,
   RunControl,
-} from "./types";
+} from "./types.ts";
 
-const actionCapability: Record<ActionType, string> = {
+const ACTION_CAPABILITY: Record<ActionType, string> = {
   SEND_DM: "SEND_MESSAGE",
   REPLY_DM: "SEND_MESSAGE",
   SEND_CONNECTION: "SEND_CONNECTION",
@@ -18,8 +18,13 @@ const actionCapability: Record<ActionType, string> = {
   PUBLISH_PAGE_POST: "PUBLISH_PAGE_POST",
 };
 
-function actionAllowedByRunControl(action: ActionType, rc: RunControl): boolean {
+export function requiredCapabilityForAction(action: ActionType): string {
+  return ACTION_CAPABILITY[action];
+}
+
+export function isActionAllowedByRunControl(action: ActionType, rc: RunControl): boolean {
   if (rc.externalActions === "BLOCKED" || rc.approvedActionExecutor === "BLOCKED") return false;
+
   if (action === "SEND_CONNECTION" || action === "ACCEPT_CONNECTION" || action === "DECLINE_CONNECTION") {
     return rc.connectionRequests !== "BLOCKED";
   }
@@ -37,45 +42,75 @@ export function resolveExecution(input: {
   const { action, capabilities, runControl, securityBlocked = false } = input;
 
   if (securityBlocked && runControl.stopOnSecurityWarning) {
-    return { allowed: false, mode: "BLOCKED_BY_POLICY", requiresUserAction: false, reason: "Security state blocks execution." };
-  }
-
-  if (runControl.approvalQueue !== "ACTIVE") {
-    return { allowed: false, mode: "BLOCKED_BY_POLICY", requiresUserAction: false, reason: "Approval Queue is paused." };
-  }
-
-  if (action.approvalState !== "APPROVED") {
-    return { allowed: false, mode: "BLOCKED_BY_POLICY", requiresUserAction: false, reason: "Action is not approved." };
-  }
-
-  if (!actionAllowedByRunControl(action.actionType, runControl)) {
-    return { allowed: false, mode: "BLOCKED_BY_POLICY", requiresUserAction: false, reason: "Run Control blocks this action type." };
-  }
-
-  const required = actionCapability[action.actionType];
-  const candidates = capabilities
-    .filter((c) => c.capability === required && c.health !== "UNAVAILABLE")
-    .sort((a, b) => Number(b.canExecute) - Number(a.canExecute));
-
-  const official = candidates.find((c) => c.mode === "AVAILABLE_OFFICIAL" && c.canExecute);
-  if (official) {
     return {
-      allowed: true,
-      mode: official.mode,
-      adapter: official.adapter,
+      allowed: false,
+      mode: "BLOCKED_BY_POLICY",
       requiresUserAction: false,
-      reason: "Authorized official adapter available.",
+      reason: "Security state blocks execution.",
+      reasonCode: "SECURITY_BLOCK",
     };
   }
 
-  const assisted = candidates.find((c) => c.mode === "AVAILABLE_ASSISTED");
+  if (runControl.approvalQueue !== "ACTIVE") {
+    return {
+      allowed: false,
+      mode: "BLOCKED_BY_POLICY",
+      requiresUserAction: false,
+      reason: "Approval Queue is paused.",
+      reasonCode: "QUEUE_PAUSED",
+    };
+  }
+
+  if (action.approvalState !== "APPROVED") {
+    return {
+      allowed: false,
+      mode: "BLOCKED_BY_POLICY",
+      requiresUserAction: false,
+      reason: "Action is not approved.",
+      reasonCode: "NOT_APPROVED",
+    };
+  }
+
+  if (!isActionAllowedByRunControl(action.actionType, runControl)) {
+    return {
+      allowed: false,
+      mode: "BLOCKED_BY_POLICY",
+      requiresUserAction: false,
+      reason: "Run Control blocks this action type.",
+      reasonCode: "RUN_CONTROL_BLOCK",
+    };
+  }
+
+  const required = requiredCapabilityForAction(action.actionType);
+  const candidates = capabilities.filter((c) => c.capability === required);
+
+  const official = candidates
+    .filter((c) => c.mode === "AVAILABLE_OFFICIAL" && c.canExecute && c.health === "HEALTHY")
+    .sort((a, b) => (a.adapter ?? "").localeCompare(b.adapter ?? ""))[0];
+
+  if (official) {
+    return {
+      allowed: true,
+      mode: "AVAILABLE_OFFICIAL",
+      adapter: official.adapter,
+      requiresUserAction: false,
+      reason: "Healthy authorized official adapter available.",
+      reasonCode: "OFFICIAL_ADAPTER",
+    };
+  }
+
+  const assisted = candidates
+    .filter((c) => c.mode === "AVAILABLE_ASSISTED" && c.health !== "UNAVAILABLE")
+    .sort((a, b) => (a.adapter ?? "").localeCompare(b.adapter ?? ""))[0];
+
   if (assisted) {
     return {
       allowed: true,
-      mode: assisted.mode,
+      mode: "AVAILABLE_ASSISTED",
       adapter: assisted.adapter,
       requiresUserAction: true,
       reason: assisted.reason ?? "Final action requires the user.",
+      reasonCode: "ASSISTED_ACTION",
     };
   }
 
@@ -83,10 +118,11 @@ export function resolveExecution(input: {
   if (restricted) {
     return {
       allowed: false,
-      mode: restricted.mode,
+      mode: "RESTRICTED_PARTNER",
       adapter: restricted.adapter,
       requiresUserAction: true,
       reason: restricted.reason ?? "Capability requires approved partner access.",
+      reasonCode: "PARTNER_RESTRICTED",
     };
   }
 
@@ -94,6 +130,7 @@ export function resolveExecution(input: {
     allowed: false,
     mode: "UNAVAILABLE",
     requiresUserAction: true,
-    reason: "No supported tenant capability is configured for this action.",
+    reason: "No healthy supported tenant capability is configured for this action.",
+    reasonCode: "CAPABILITY_UNAVAILABLE",
   };
 }
