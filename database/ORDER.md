@@ -8,6 +8,14 @@ For a fresh environment apply:
 4. `004_invariants_and_worker_state.sql`
 5. `005_indexes.sql`
 6. `seed-workflows.sql`
-7. `rls.sql` only after the tenant access policy is reviewed/approved
+7. `006_app_rpcs_and_scheduler.sql`
+8. `007_execution_rpcs.sql`
+9. `008_internal_workflow_processor.sql`
+10. `rls.sql`
 
-The RLS file is intentionally last because enabling RLS without matching policies can lock clients out, while enabling client grants without RLS can expose tenant data.
+Then run:
+
+- `database/tests/001_invariants.sql`
+- `database/tests/002_rls_isolation.sql`
+
+RLS is intentionally applied after schema/functions are present. Do not expose a frontend until RLS and its isolation tests pass.
