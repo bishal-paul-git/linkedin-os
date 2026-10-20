@@ -1,50 +1,85 @@
 # LinkedIn OS
 
-A reusable, multi-tenant LinkedIn relationship operating system with specialist agents, persistent memory, capability-aware integrations, and approval-gated actions.
+A reusable, multi-tenant LinkedIn relationship operating system with specialist agents, persistent memory, capability-aware integrations, approval-gated actions, and a live Supabase/Postgres backend core.
 
-## v1.3
+## Current version
 
-The same shared system can support many independent users/teams. Each tenant gets isolated configuration, CRM/memory, integrations, LinkedIn authorization, Run Control, Approval Queue, schedules, and audit state.
+**v1.4.1 — backend refinement release**
 
-Before doing anything on LinkedIn, the system resolves what that tenant can actually do.
+The product core now includes:
 
-## Execution modes
+- tenant/workspace isolation;
+- persistent CRM and relationship memory;
+- separate network state and relationship stage;
+- normalized contact identities;
+- agents and workflows;
+- Run Control;
+- Approval Queue with approval fingerprints;
+- idempotency keys;
+- workflow run lineage and worker leases;
+- capability resolver;
+- official/assisted/unavailable execution modes;
+- provider-independent adapter contracts;
+- server orchestration services;
+- strict TypeScript workspace and core tests.
 
-- **Official API** — execute through authorized API access.
-- **Assisted** — research/draft/approve, then the user performs the final LinkedIn action.
-- **Read-only** — analyze without writing.
-- **Restricted partner** — capability exists but requires LinkedIn approval/partner access.
-- **Unavailable** — no supported adapter exists.
+## Architecture
+
+```text
+Tenant
+  ↓
+Manager
+  ├─ Inbox
+  ├─ Network
+  ├─ Content
+  └─ CRM / Memory
+        ↓
+   Workflow Run
+        ↓
+   Approval Queue
+        ↓
+ Capability Resolver
+   ├─ Official adapter
+   ├─ Assisted/manual
+   └─ Unavailable/restricted
+```
+
+## State model
+
+LinkedIn connection facts and relationship maturity are separate.
+
+Network:
+
+`UNKNOWN → NOT_CONNECTED → INVITED → CONNECTED`
+
+Relationship:
+
+`DISCOVERED → QUALIFIED → APPROVED → PREPARED → ENGAGED → ACTIVE → OPPORTUNITY`
+
+`Do Not Contact` is a separate safety flag.
 
 ## Start here
 
 - [SYSTEM.md](SYSTEM.md)
 - [linkedin-os.yaml](linkedin-os.yaml)
+- [database/README.md](database/README.md)
+- [memory/STATE_MODEL.md](memory/STATE_MODEL.md)
 - [product/MULTI_TENANT_ARCHITECTURE.md](product/MULTI_TENANT_ARCHITECTURE.md)
 - [product/CAPABILITY_MATRIX.md](product/CAPABILITY_MATRIX.md)
-- [product/CONNECTOR_STRATEGY.md](product/CONNECTOR_STRATEGY.md)
-- [product/TENANT_ONBOARDING.md](product/TENANT_ONBOARDING.md)
-- [runtime/CAPABILITY_RESOLVER.md](runtime/CAPABILITY_RESOLVER.md)
+- [docs/CURRENT_STATUS.md](docs/CURRENT_STATUS.md)
 - [docs/ROADMAP.md](docs/ROADMAP.md)
 
-## Core agents
+## Development
 
-Manager, Inbox, Network, Content, CRM, Approval Executor.
+```bash
+npm install
+npm run check
+```
 
-## Product architecture
-
-Shared code is separate from private tenant runtime.
-
-For the current single-user V1, Google Sheets is supported as memory. For a real multi-user product, the recommended backend is Postgres/Supabase with tenant isolation and row-level security.
-
-## Status
-
-**v1.3.0 — multi-tenant product architecture defined; software product implementation is next.**
-
-The repository now contains the reusable OS contracts. The next engineering phase is the tenant backend, OAuth/integrations, capability service, workers/schedules, and dashboard.
+The test command uses Node's built-in test runner with type stripping. TypeScript is used for strict source checking.
 
 ## Security
 
-Never store OAuth tokens, browser/session data, private CRM records, or LinkedIn messages in this public repository.
+The live LinkedIn OS tables currently have direct client grants revoked. The refined tenant RLS policy set is prepared but intentionally not enabled without explicit approval.
 
-Every production operation must be tenant-scoped, capability-gated, approval-aware, and auditable.
+Never store OAuth tokens, browser sessions, private CRM records or LinkedIn messages in this public repository.
