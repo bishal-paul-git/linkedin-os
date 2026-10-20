@@ -3,7 +3,7 @@ import type {
   Capability,
   RunControl,
   TenantId,
-} from "../../core/src/index";
+} from "../../core/src/index.ts";
 
 export interface TenantRecord {
   id: TenantId;
@@ -29,12 +29,16 @@ export interface PlatformRepositories {
     createdBy?: string | null;
   }): Promise<TenantRecord>;
 
+  createOwnerMembership(tenantId: TenantId, userId: string): Promise<void>;
   createRunControl(tenantId: TenantId): Promise<void>;
+  createDefaultConfig(tenantId: TenantId): Promise<void>;
+  createDefaultCapabilities(tenantId: TenantId): Promise<void>;
   createDefaultAgentSettings(tenantId: TenantId): Promise<void>;
   createDefaultWorkflowSettings(tenantId: TenantId): Promise<void>;
 
   getRunControl(tenantId: TenantId): Promise<RunControl>;
   listCapabilities(tenantId: TenantId): Promise<Capability[]>;
+  hasBlockingSecurityEvent(tenantId: TenantId): Promise<boolean>;
 
   getApproval(tenantId: TenantId, approvalId: string): Promise<ApprovalAction | null>;
   updateApproval(
@@ -42,13 +46,24 @@ export interface PlatformRepositories {
     approvalId: string,
     patch: Partial<ApprovalAction> & Record<string, unknown>,
   ): Promise<void>;
+
   hasSucceededIdempotencyKey(tenantId: TenantId, key: string): Promise<boolean>;
+
+  /**
+   * Atomically transitions one APPROVED + executable approval into RUNNING.
+   * Returns null if it was already claimed, invalidated, blocked or completed.
+   */
+  claimApprovalForExecution(
+    tenantId: TenantId,
+    approvalId: string,
+  ): Promise<ApprovalAction | null>;
 
   createWorkflowRun(input: {
     tenantId: TenantId;
     workflowCode: string;
     triggerType: "MANUAL" | "SCHEDULED" | "EVENT" | "SYSTEM";
     inputSummary?: string;
+    dedupeKey?: string;
   }): Promise<WorkflowRunRecord>;
 
   finishWorkflowRun(input: {
@@ -68,6 +83,7 @@ export interface PlatformRepositories {
     result: string;
     approvalId?: string;
     contactId?: string;
+    workflowRunId?: string;
     sourceUrl?: string;
     metadata?: Record<string, unknown>;
   }): Promise<void>;
