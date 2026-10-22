@@ -6,6 +6,7 @@ Supabase's advisor reports callable `SECURITY DEFINER` functions for:
 
 - `public.li_set_integration_secret`
 - `public.li_zernio_sync_accounts`
+- `public.li_zernio_sync_external_posts`
 
 This is intentional because browser roles must not receive direct Vault-secret access or unrestricted HTTP-extension privileges.
 
@@ -13,14 +14,16 @@ Controls applied:
 
 - `search_path = ''`;
 - `auth.uid()` is required;
-- tenant-admin authorization is checked inside each function;
+- tenant-scoped authorization is checked inside each function;
+- credential-changing operations require tenant admin; read-only external-post sync requires tenant write access;
 - integration ownership is checked by tenant ID;
 - EXECUTE is revoked from PUBLIC and `anon`;
 - only `authenticated` receives EXECUTE;
 - plaintext credentials are never stored in `li_integrations`;
 - the public integration row stores only a Vault secret UUID reference;
 - account sync is a read-only Zernio GET request;
-- publishing is not performed by either credential/setup RPC.
+- external-post sync calls Zernio's read/import endpoint and does not publish, edit or delete LinkedIn content;
+- publishing is not performed by any credential/setup/sync RPC.
 
 Verification completed:
 
