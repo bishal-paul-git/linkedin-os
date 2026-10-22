@@ -8,6 +8,25 @@ export interface ZernioAccount {
   hasAnalyticsAccess?: boolean;
 }
 
+export interface ZernioExternalPost {
+  platform?: string;
+  platformPostId?: string;
+  platformPostUrl?: string;
+  content?: string | null;
+  publishedAt?: string | null;
+  mediaType?: string | null;
+  mediaUrl?: string | null;
+  thumbnailUrl?: string | null;
+  analytics?: Record<string, unknown>;
+}
+
+export interface ZernioExternalSyncResult {
+  synced?: { postsFound?: number; postsSynced?: number; skipped?: boolean };
+  found?: boolean;
+  post?: ZernioExternalPost;
+  posts?: ZernioExternalPost[];
+}
+
 export interface ZernioPostResult {
   id?: string;
   status?: string;
@@ -77,6 +96,21 @@ export class ZernioClient {
       hasAnalyticsAccess:
         typeof a.hasAnalyticsAccess === "boolean" ? a.hasAnalyticsAccess : undefined,
     })).filter((a) => Boolean(a.id));
+  }
+
+  async syncExternalPosts(input: {
+    accountId: string;
+    url?: string;
+    postId?: string;
+  }): Promise<ZernioExternalSyncResult> {
+    return this.request("/posts/sync-external", {
+      method: "POST",
+      body: JSON.stringify({
+        accountId: input.accountId,
+        ...(input.url ? { url: input.url } : {}),
+        ...(input.postId ? { postId: input.postId } : {}),
+      }),
+    }) as Promise<ZernioExternalSyncResult>;
   }
 
   async createLinkedInPost(input: {
