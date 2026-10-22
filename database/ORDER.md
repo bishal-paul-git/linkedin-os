@@ -11,7 +11,8 @@ For a fresh environment apply:
 7. `006_app_rpcs_and_scheduler.sql`
 8. `007_execution_rpcs.sql`
 9. `008_internal_workflow_processor.sql`
-10. `rls.sql`
+10. `009_zernio_integration.sql`
+11. `rls.sql`
 
 Then run:
 
