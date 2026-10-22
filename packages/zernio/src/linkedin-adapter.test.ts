@@ -150,3 +150,22 @@ test("reads posting-frequency data without creating a post", async () => {
   );
   assert.equal(Array.isArray(result.frequency), true);
 });
+
+test("lists LinkedIn Page comments without writing engagement", async () => {
+  let calledUrl = "";
+  const client = new ZernioClient("test-key", async (url) => {
+    calledUrl = url;
+    return response({ comments: [], meta: { accountsSkipped: [] } });
+  });
+
+  const result = await client.listLinkedInPageComments({
+    accountId: "org-account-1",
+    limit: 25,
+  });
+
+  assert.equal(
+    calledUrl,
+    "https://zernio.com/api/v1/inbox/comments?platform=linkedin&accountId=org-account-1&limit=25&sortBy=date&sortOrder=desc",
+  );
+  assert.equal(Array.isArray(result.comments), true);
+});
