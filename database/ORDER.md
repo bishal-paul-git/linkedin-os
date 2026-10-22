@@ -14,6 +14,7 @@ For a fresh environment apply:
 10. `rls.sql`
 11. `009_zernio_integration.sql`
 12. `010_zernio_hardening.sql`
+13. `011_fix_workspace_bootstrap.sql`
 
 Then run:
 
