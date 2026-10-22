@@ -43,6 +43,7 @@ https://github.com/bishal-paul-git/linkedin-os
 - normalized owned/external LinkedIn post history
 - stored account/post analytics snapshots
 - best-time and posting-frequency analytics sync
+- read-only organization Page comment monitoring
 - GitHub CI for typecheck, tests and web build
 
 ## Product navigation
