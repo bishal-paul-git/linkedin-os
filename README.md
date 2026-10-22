@@ -20,9 +20,13 @@ https://github.com/bishal-paul-git/linkedin-os
 - tenant-isolated Postgres/Supabase memory
 - Owner/Admin/Member/Viewer RLS
 - Manager, Inbox, Network, Content, CRM and Approval Executor agents
+- Inbox / conversation memory
 - Contacts / relationship memory
-- Opportunities / tasks model
+- Tasks and next-action tracking
+- Opportunities
+- Content & Engagement drafts
 - Approval Queue
+- Workspace Config / ICP / writing voice
 - Run Control
 - capability registry
 - integration registry
@@ -37,12 +41,16 @@ https://github.com/bishal-paul-git/linkedin-os
 ## Product navigation
 
 - Action Centre
+- Inbox
 - Contacts
+- Tasks
 - Opportunities
 - Approvals
+- Content
 - Workflows
 - Integrations & Capabilities
 - Security & Run Control
+- Settings
 
 ## Execution model
 
