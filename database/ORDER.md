@@ -19,6 +19,7 @@ For a fresh environment apply:
 15. `013_social_post_fk_indexes.sql`
 16. `014_zernio_account_analytics.sql`
 17. `015_zernio_read_sync_admin_only.sql`
+18. `016_zernio_page_comment_monitoring.sql`
 
 Then run:
 
