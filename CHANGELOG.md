@@ -13,8 +13,10 @@ Added:
 - Action Centre;
 - Inbox & Conversations;
 - Contacts / Memory;
+- contact relationship timeline;
 - Tasks;
 - Opportunities;
+- evidence-first opportunity pipeline board;
 - Approval Queue;
 - Content & Engagement;
 - Workspace Settings / tenant Config;
