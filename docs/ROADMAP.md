@@ -52,7 +52,8 @@
 - [x] owned-account analytics capability registration
 - [ ] first real workspace → Zernio REST key binding
 - [ ] authenticated no-publish live Zernio account sync from the web product
-- [ ] organization Page comments integration if required
+- [x] read-only organization Page comment monitoring
+- [ ] approval-gated organization Page comment replies/likes/deletes if required
 - [ ] LinkedIn identity/OAuth where useful
 - [ ] prospect-data provider
 - [ ] CRM/email/calendar adapters
