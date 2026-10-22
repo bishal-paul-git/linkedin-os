@@ -2,7 +2,7 @@
 
 ## 1.5.0
 
-Usable product-core release.
+Usable product-core release plus product-completeness pass.
 
 Added:
 
@@ -11,7 +11,15 @@ Added:
 - enabled and tested tenant RLS;
 - concrete Supabase repository adapter;
 - Action Centre;
-- Contacts/Memory, Opportunities, Approvals, Workflows, Integrations and Security views;
+- Inbox & Conversations;
+- Contacts / Memory;
+- Tasks;
+- Opportunities;
+- Approval Queue;
+- Content & Engagement;
+- Workspace Settings / tenant Config;
+- workspace-member visibility;
+- Workflows, Integrations and Security views;
 - manual workflow execution;
 - interval schedules;
 - pg_cron scheduler tick;
@@ -26,9 +34,10 @@ Added:
 
 Verified:
 
-- production build READY;
-- protected anonymous routes redirect to login;
-- fresh runtime error window is clean;
+- current production build READY;
+- login route returns HTTP 200;
+- protected anonymous routes resolve to the login surface;
+- fresh production runtime error window is clean;
 - RLS role/isolation tests pass;
 - scheduler/processor smoke test passes.
 
