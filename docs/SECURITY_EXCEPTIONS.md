@@ -1,34 +1,53 @@
 # Reviewed security exceptions
 
-## Zernio Vault / account-sync RPCs
+## Callable SECURITY DEFINER RPCs
 
-Supabase's advisor reports callable `SECURITY DEFINER` functions for:
+Supabase's advisor reports authenticated-callable `SECURITY DEFINER` functions for:
 
+- `public.li_bootstrap_workspace`
 - `public.li_set_integration_secret`
 - `public.li_zernio_sync_accounts`
 - `public.li_zernio_sync_external_posts`
+- `public.li_zernio_sync_account_analytics`
 
-This is intentional because browser roles must not receive direct Vault-secret access or unrestricted HTTP-extension privileges.
+These are intentional. Browser roles must not receive direct Vault-secret access, unrestricted HTTP-extension privileges, or the ability to bypass the first-workspace RLS bootstrap cycle.
 
-Controls applied:
+### Workspace bootstrap controls
 
-- `search_path = ''`;
-- `auth.uid()` is required;
-- tenant-scoped authorization is checked inside each function;
-- credential-changing operations require tenant admin; read-only external-post sync requires tenant write access;
-- integration ownership is checked by tenant ID;
-- EXECUTE is revoked from PUBLIC and `anon`;
-- only `authenticated` receives EXECUTE;
-- plaintext credentials are never stored in `li_integrations`;
-- the public integration row stores only a Vault secret UUID reference;
-- account sync is a read-only Zernio GET request;
-- external-post sync calls Zernio's read/import endpoint and does not publish, edit or delete LinkedIn content;
-- publishing is not performed by any credential/setup/sync RPC.
+`li_bootstrap_workspace`:
 
-Verification completed:
+- requires `auth.uid()`;
+- never accepts a user/owner ID as an input parameter;
+- always assigns the first OWNER membership to the calling authenticated user;
+- uses static SQL;
+- creates only one caller-owned tenant/workspace per invocation;
+- normal tenant RLS applies immediately after bootstrap.
+
+### Zernio integration controls
+
+All Zernio RPCs:
+
+- use `search_path = ''`;
+- require `auth.uid()`;
+- verify tenant ownership/access internally;
+- revoke EXECUTE from PUBLIC and `anon`;
+- grant EXECUTE only to `authenticated`;
+- never return a decrypted provider credential;
+- store only a Vault UUID reference in `li_integrations`.
+
+Credential and provider-sync operations require **tenant Owner/Admin**.
+
+`li_zernio_sync_accounts`, `li_zernio_sync_external_posts`, and `li_zernio_sync_account_analytics` are provider-read/sync operations. They do not publish, edit, delete, DM, connect, or manage invitations.
+
+The analytics sync may write normalized internal post/metric snapshots after reading Zernio, but does not create public LinkedIn content.
+
+### Verification completed
 
 - owner/admin Vault round-trip succeeded with rollback-only synthetic data;
-- plaintext was absent from the integration row;
-- a normal MEMBER was rejected from the credential setter.
+- plaintext credential was absent from the integration row;
+- normal MEMBER was rejected from credential storage;
+- normal MEMBER was rejected from external-post sync;
+- normal MEMBER was rejected from account-analytics sync;
+- QA first-workspace bootstrap succeeded and produced exactly one OWNER membership.
 
-Re-review this exception if the secret architecture or exposed Supabase schemas change.
+Re-review these exceptions if the secret architecture, exposed Supabase schemas, or tenant-role model changes.
