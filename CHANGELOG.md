@@ -30,8 +30,9 @@ Added:
 - normalized owned-post store and analytics snapshots;
 - read-only LinkedIn account analytics, best-time and posting-frequency sync;
 - LinkedIn Analytics product screen;
+- read-only organization Page comment monitoring and snapshot storage;
 - Zernio publishing/analytics capability registration;
-- GitHub CI covering TypeScript, 17 unit tests and the production web build.
+- GitHub CI covering TypeScript, 18 unit tests and the production web build.
 
 Verified:
 
@@ -41,7 +42,7 @@ Verified:
 - approval/idempotency database tests pass;
 - Vault reference storage passes rollback-only testing;
 - normal tenant MEMBER cannot store provider credentials;
-- 17/17 unit tests pass;
+- 18/18 unit tests pass;
 - web production build compiles successfully.
 
 No LinkedIn post, DM or connection request was sent during the Zernio integration review/build.
