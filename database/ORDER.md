@@ -18,6 +18,7 @@ For a fresh environment apply:
 14. `012_social_posts_and_zernio_external_sync.sql`
 15. `013_social_post_fk_indexes.sql`
 16. `014_zernio_account_analytics.sql`
+17. `015_zernio_read_sync_admin_only.sql`
 
 Then run:
 
