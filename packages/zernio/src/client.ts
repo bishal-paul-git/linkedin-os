@@ -153,6 +153,19 @@ export class ZernioClient {
     })) as Promise<Record<string, unknown>>;
   }
 
+  async listLinkedInPageComments(input: {
+    accountId: string;
+    limit?: number;
+  }): Promise<Record<string, unknown>> {
+    return this.request("/inbox/comments" + query({
+      platform: "linkedin",
+      accountId: input.accountId,
+      limit: String(input.limit ?? 50),
+      sortBy: "date",
+      sortOrder: "desc",
+    })) as Promise<Record<string, unknown>>;
+  }
+
   async createLinkedInPost(input: {
     accountId: string;
     content: string;
