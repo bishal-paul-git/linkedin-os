@@ -11,12 +11,15 @@ For a fresh environment apply:
 7. `006_app_rpcs_and_scheduler.sql`
 8. `007_execution_rpcs.sql`
 9. `008_internal_workflow_processor.sql`
-10. `009_zernio_integration.sql`
-11. `rls.sql`
+10. `rls.sql`
+11. `009_zernio_integration.sql`
+12. `010_zernio_hardening.sql`
 
 Then run:
 
 - `database/tests/001_invariants.sql`
 - `database/tests/002_rls_isolation.sql`
 
-RLS is intentionally applied after schema/functions are present. Do not expose a frontend until RLS and its isolation tests pass.
+Why RLS precedes the Zernio migration: `009_zernio_integration.sql` creates policies that call the private tenant-access helpers defined by `rls.sql`.
+
+Do not expose a frontend until RLS and its isolation tests pass.

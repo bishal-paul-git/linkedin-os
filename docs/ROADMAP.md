@@ -22,10 +22,14 @@
 - [x] Supabase Auth
 - [x] workspace onboarding
 - [x] Action Centre
+- [x] Inbox / Conversations UI
 - [x] Contacts / Memory UI
+- [x] Tasks UI
 - [x] Opportunities UI
 - [x] Approval Queue UI
+- [x] Content / Engagement UI
 - [x] Workflows UI
+- [x] workspace Config / Settings
 - [x] manual workflow execution
 - [x] schedules
 - [x] pg_cron scheduler
@@ -35,23 +39,40 @@
 - [x] assisted completion reconciliation
 - [x] Vercel production deployment
 - [x] runtime/auth hardening
+- [x] GitHub CI for monorepo typecheck, tests and web build
 
 ## V1.6 — external adapters
 
-- [ ] LinkedIn identity/OAuth
-- [ ] supported LinkedIn member publishing
-- [ ] Community Management/Page adapter where approved
-- [ ] restricted partner APIs when/if approved
+- [x] Zernio provider package
+- [x] Zernio multi-account LinkedIn binding model
+- [x] encrypted Zernio secret storage with Supabase Vault
+- [x] read-only Zernio account discovery/sync
+- [x] personal LinkedIn publishing capability adapter
+- [x] organization Page publishing capability adapter
+- [x] owned-account analytics capability registration
+- [ ] first real workspace → Zernio REST key binding
+- [ ] authenticated no-publish live Zernio account sync from the web product
+- [ ] organization Page comments integration if required
+- [ ] LinkedIn identity/OAuth where useful
 - [ ] prospect-data provider
 - [ ] CRM/email/calendar adapters
 - [ ] optional Google Sheets import/export
+- [ ] restricted partner LinkedIn APIs only if approved
+
+## Capabilities that remain assisted/unavailable
+
+- LinkedIn DMs
+- connection requests
+- invitation accept/decline
+- exact person relationship-state lookup
+- arbitrary LinkedIn feed reading
+- prospect discovery without a separate data provider
 
 ## V1.7 — product expansion
 
 - [ ] team invitation UI
 - [ ] richer contact detail timeline
 - [ ] opportunity pipeline board
-- [ ] task management UI
 - [ ] workflow builder/config editor
 - [ ] notification preferences
 - [ ] billing/plan layer if commercialized
@@ -59,9 +80,12 @@
 
 ## Production hardening
 
-- [ ] encrypted external-secret store
-- [ ] adapter token refresh/reconnect tests
-- [ ] end-to-end authenticated browser test with a real test account
+- [x] encrypted external-secret store for Zernio
+- [x] integration account registry
+- [x] provider account-health verification before CONNECTED
+- [x] repository-wide CI
+- [ ] Zernio token/key replacement and failure-path live test with a real workspace
+- [ ] end-to-end authenticated browser test with a real test workspace
 - [ ] audit retention policy
 - [ ] backups/recovery runbook
 - [ ] monitoring/alerts

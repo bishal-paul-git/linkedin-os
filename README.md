@@ -24,19 +24,23 @@ https://github.com/bishal-paul-git/linkedin-os
 - Contacts / relationship memory
 - Tasks and next-action tracking
 - Opportunities
-- Content & Engagement drafts
+- Content & Engagement
 - Approval Queue
 - Workspace Config / ICP / writing voice
 - Run Control
-- capability registry
-- integration registry
+- capability and integration registries
 - manual + scheduled workflow runs
 - internal pg_cron scheduler and workflow processor
-- assisted/manual completion path when an external API is not connected
+- assisted/manual completion for unsupported external actions
 - activity log + security events
 - responsive Next.js dashboard
 - concrete Supabase repository adapter
 - idempotency, approval fingerprints, worker leases and workflow lineage
+- Zernio provider package for owned LinkedIn publishing/analytics
+- encrypted Zernio credential storage in Supabase Vault
+- multi-account personal/Page provider bindings
+- read-only provider account sync
+- GitHub CI for typecheck, tests and web build
 
 ## Product navigation
 
@@ -69,22 +73,19 @@ Run Control + Capability Resolver
   └─ Blocked/unavailable
 ```
 
-External LinkedIn APIs are intentionally not required by the core. Until an authorized adapter is connected, relevant actions remain assisted/manual and are reconciled into memory only after completion is confirmed.
+Zernio is treated as an owned-account publishing/analytics adapter, not as a replacement for LinkedIn DMs, connections, invitation management or prospect discovery.
+
+External actions never bypass Run Control or exact Approval Queue approval.
 
 ## Security
 
-RLS is enabled and tested. Synthetic isolation tests pass for:
-
-- owner sees only own tenant/data
-- member write access
-- viewer write denial
-- outsider isolation
-
-Anonymous requests to protected product routes are redirected to login before tenant data is queried.
+RLS is enabled and tested. External credentials are not committed to this public repository. Zernio REST keys are stored in Supabase Vault and only Vault references are stored with tenant integration rows.
 
 See:
 
 - [docs/CURRENT_STATUS.md](docs/CURRENT_STATUS.md)
+- [docs/ZERNIO_SETUP.md](docs/ZERNIO_SETUP.md)
+- [docs/SECURITY_EXCEPTIONS.md](docs/SECURITY_EXCEPTIONS.md)
 - [docs/AUTH_SETUP.md](docs/AUTH_SETUP.md)
 - [docs/OPERATIONS.md](docs/OPERATIONS.md)
 - [database/ORDER.md](database/ORDER.md)
@@ -97,4 +98,4 @@ npm run check
 npm run build:web
 ```
 
-Never commit OAuth tokens, browser sessions, private CRM data, LinkedIn messages or external-provider secrets to this repository.
+Never commit OAuth tokens, API keys, browser sessions, private CRM data, LinkedIn messages or external-provider secrets to this repository.

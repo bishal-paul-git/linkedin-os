@@ -1,37 +1,15 @@
 # Current Status
 
-## v1.5.0 — live product core
+## v1.5.0 — live product core + Zernio adapter foundation
 
-LinkedIn OS now has a usable multi-user web product on top of the operating-system/backend architecture.
+LinkedIn OS is a usable multi-user web product with tenant-isolated memory, agents, approvals, workflows and capability-aware integrations.
 
 ### Live
 
 - Web app: https://linkedin-os-delta.vercel.app
 - Source: https://github.com/bishal-paul-git/linkedin-os
 - Supabase/Postgres backend: live
-- Vercel deployment: READY
-
-### Authentication and tenancy
-
-Built:
-
-- email/password Supabase Auth
-- protected server routes
-- workspace onboarding
-- tenant bootstrap RPC
-- Owner/Admin/Member/Viewer membership model
-- row-level security
-- per-tenant Config, Run Control, agents, workflows, capabilities and memory
-
-RLS was applied as a recorded migration and validated with rollback-only synthetic identities.
-
-Passed:
-
-- owner sees only own tenant
-- owner sees only own contacts
-- member can write own tenant
-- viewer cannot write
-- outsider sees no tenant data
+- Vercel production deployment: READY
 
 ### Product UI
 
@@ -44,73 +22,82 @@ Built:
 - Opportunities
 - Approval Queue
 - Content & Engagement
-- Workflows
-- interval schedules
-- workflow-run history
+- Workflows and schedules
 - Integrations & Capabilities
 - Security & Run Control
-- agent status
-- security-event view
 - Workspace Settings / Config
-- workspace member visibility
 
-The manual-first surfaces use the same persistent tables future LinkedIn/prospect/CRM adapters will write to, so later integrations do not need a second CRM or second workflow model.
-
-### Workflow runtime
+### Zernio
 
 Built:
 
-- manual workflow enqueue RPC
-- interval schedule model
-- pg_cron scheduler tick every minute
-- internal queued-run processor every minute
-- workflow dedupe keys
-- leases / heartbeat / attempts model
-- DAILY_RUN database snapshot
-- capability-aware BLOCKED/PARTIAL results for workflows requiring external context
-- Approval Executor readiness reporting
+- reusable `@linkedin-os/zernio` provider package;
+- personal vs organization account binding;
+- `li_integration_accounts` with tenant RLS;
+- Supabase Vault credential storage;
+- read-only Zernio account sync;
+- provider health promotion only after successful account sync;
+- personal LinkedIn publishing capability mapping;
+- organization Page publishing capability mapping;
+- analytics capability registration;
+- Integrations UI for encrypted key setup and account sync;
+- mocked adapter tests proving unsupported connection actions are blocked.
 
-A rollback-only scheduler → enqueue → processor smoke test passes.
+The ChatGPT Zernio connector and the deployed web app are separate credential contexts. A ChatGPT connector session is not reused by Vercel.
 
-### External execution without APIs
+No Zernio publishing action was performed during this integration build/review.
 
-The core is usable before external APIs are connected.
+### Current production binding blocker
 
-Approval rows support:
+The product integration code is complete, but the production Supabase environment currently has no onboarded LinkedIn OS tenant/workspace to bind provider credentials to.
 
-- exact content approval
-- approval fingerprints
-- stale-approval invalidation
-- idempotency
-- atomic execution claim
-- assisted/manual completion reconciliation
+The first live standalone Zernio binding therefore requires:
 
-Example:
+1. create/sign in to a LinkedIn OS workspace;
+2. create a dedicated Zernio REST API key;
+3. enter it through the Integrations screen;
+4. run the read-only account sync;
+5. verify the expected personal/Page bindings.
 
-`approve SEND_CONNECTION → user completes it on LinkedIn → mark completed → Approval=SUCCEEDED → contact network_state=INVITED → Activity Log`
+### Zernio does not replace
 
-The system does not pretend a LinkedIn action happened merely because it was prepared or approved.
+- LinkedIn DMs;
+- connection requests;
+- invitation management;
+- person-to-person relationship lookup;
+- prospect discovery;
+- arbitrary LinkedIn feed access.
 
-### Verification
+Those capabilities remain assisted/browser-based or require another authorized provider.
 
-- core strict TypeScript check passed
-- core test suite: 10/10 passed
-- database invariant tests passed
-- RLS isolation suite passed
-- scheduler/processor smoke test passed
-- current Next.js product-completeness build: READY
-- production login page: HTTP 200
-- new protected Inbox and Settings routes resolve through the auth guard
-- fresh Vercel runtime error window after the completeness build: no errors
+### Security verification
 
-### Intentionally later
+Passed:
 
-External tool/API adapters:
+- tenant RLS isolation;
+- Owner/Admin/Member/Viewer access rules;
+- approval invalidation and idempotency;
+- Vault credential round-trip using rollback-only synthetic data;
+- plaintext credential absent from integration records;
+- MEMBER denied access to credential storage;
+- Zernio integration-account RLS enabled with four policies.
 
-- LinkedIn OAuth/API
-- LinkedIn partner-only network/messaging APIs if approved
-- prospect-data providers
-- CRM/email/calendar adapters
-- optional Google Sheets import/export
+Supabase advisor notes two intentional callable SECURITY DEFINER RPCs for Vault/account sync. Their reviewed controls are documented in `docs/SECURITY_EXCEPTIONS.md`.
 
-These plug into the existing Integration + Capability registry and do not require redesigning the core.
+### Build verification
+
+- strict TypeScript check: pass
+- unit tests: **14/14 pass**
+- Zernio mocked adapter tests: pass
+- Next.js production build: pass
+- GitHub CI: pass
+- Vercel product build: READY
+
+### Remaining next work
+
+- onboard the first real workspace;
+- bind a dedicated Zernio REST key and perform read-only account sync;
+- add a prospect-data adapter for Network discovery;
+- add CRM/email/calendar adapters as useful;
+- decide whether Page-comment support should be surfaced through Zernio REST;
+- keep unsupported LinkedIn network/message actions approval-gated and assisted.

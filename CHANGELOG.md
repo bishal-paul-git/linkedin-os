@@ -2,7 +2,7 @@
 
 ## 1.5.0
 
-Usable product-core release plus product-completeness pass.
+Usable product-core release plus integration/completeness hardening.
 
 Added:
 
@@ -18,30 +18,29 @@ Added:
 - Approval Queue;
 - Content & Engagement;
 - Workspace Settings / tenant Config;
-- workspace-member visibility;
 - Workflows, Integrations and Security views;
 - manual workflow execution;
-- interval schedules;
-- pg_cron scheduler tick;
-- internal queued-workflow processor;
-- workspace bootstrap RPC;
-- approval decision RPC;
-- atomic approval claim RPC;
+- interval schedules and pg_cron workflow processor;
 - assisted/manual completion reconciliation;
-- production Vercel deployment;
-- reproducible RLS isolation tests;
-- scheduler/processor smoke verification.
+- Zernio provider package;
+- Zernio personal + organization LinkedIn account model;
+- encrypted provider credentials through Supabase Vault;
+- read-only Zernio account sync;
+- Zernio publishing/analytics capability registration;
+- GitHub CI covering TypeScript, 14 unit tests and the production web build.
 
 Verified:
 
-- current production build READY;
-- login route returns HTTP 200;
-- protected anonymous routes resolve to the login surface;
-- fresh production runtime error window is clean;
+- production Vercel builds READY;
+- protected anonymous routes resolve to login;
 - RLS role/isolation tests pass;
-- scheduler/processor smoke test passes.
+- approval/idempotency database tests pass;
+- Vault reference storage passes rollback-only testing;
+- normal tenant MEMBER cannot store provider credentials;
+- 14/14 unit tests pass;
+- web production build compiles successfully.
 
-External LinkedIn and other provider adapters remain intentionally deferred to the adapter phase.
+No LinkedIn post, DM or connection request was sent during the Zernio integration review/build.
 
 ## 1.4.1
 
