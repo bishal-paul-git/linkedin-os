@@ -26,8 +26,12 @@ Added:
 - Zernio personal + organization LinkedIn account model;
 - encrypted provider credentials through Supabase Vault;
 - read-only Zernio account sync;
+- external LinkedIn post discovery/import;
+- normalized owned-post store and analytics snapshots;
+- read-only LinkedIn account analytics, best-time and posting-frequency sync;
+- LinkedIn Analytics product screen;
 - Zernio publishing/analytics capability registration;
-- GitHub CI covering TypeScript, 14 unit tests and the production web build.
+- GitHub CI covering TypeScript, 17 unit tests and the production web build.
 
 Verified:
 
@@ -37,7 +41,7 @@ Verified:
 - approval/idempotency database tests pass;
 - Vault reference storage passes rollback-only testing;
 - normal tenant MEMBER cannot store provider credentials;
-- 14/14 unit tests pass;
+- 17/17 unit tests pass;
 - web production build compiles successfully.
 
 No LinkedIn post, DM or connection request was sent during the Zernio integration review/build.
