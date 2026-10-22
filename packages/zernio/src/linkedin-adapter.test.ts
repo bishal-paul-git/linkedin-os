@@ -100,3 +100,53 @@ test("syncs external LinkedIn posts without publishing", async () => {
   assert.equal(result.found, true);
   assert.equal(result.post?.analytics?.impressions, 25);
 });
+
+test("reads LinkedIn account analytics without publishing", async () => {
+  let calledUrl = "";
+  const client = new ZernioClient("test-key", async (url) => {
+    calledUrl = url;
+    return response({ posts: [], totals: { impressions: 42 } });
+  });
+
+  const result = await client.getLinkedInAnalytics({
+    accountId: "linkedin-account-1",
+    fromDate: "2026-10-01",
+    toDate: "2026-10-22",
+  });
+
+  assert.equal(
+    calledUrl,
+    "https://zernio.com/api/v1/analytics?platform=linkedin&accountId=linkedin-account-1&fromDate=2026-10-01&toDate=2026-10-22",
+  );
+  assert.equal((result.totals as any).impressions, 42);
+});
+
+test("reads best-time data without creating a post", async () => {
+  let calledUrl = "";
+  const client = new ZernioClient("test-key", async (url) => {
+    calledUrl = url;
+    return response({ slots: [{ day: "Tuesday", hour: 9 }] });
+  });
+
+  const result = await client.getBestTime({ accountId: "linkedin-account-1" });
+  assert.equal(
+    calledUrl,
+    "https://zernio.com/api/v1/analytics/best-time?platform=linkedin&accountId=linkedin-account-1",
+  );
+  assert.equal(Array.isArray(result.slots), true);
+});
+
+test("reads posting-frequency data without creating a post", async () => {
+  let calledUrl = "";
+  const client = new ZernioClient("test-key", async (url) => {
+    calledUrl = url;
+    return response({ frequency: [{ postsPerWeek: 4, avgEngagementRate: 2.3 }] });
+  });
+
+  const result = await client.getPostingFrequency({ accountId: "linkedin-account-1" });
+  assert.equal(
+    calledUrl,
+    "https://zernio.com/api/v1/analytics/posting-frequency?platform=linkedin&accountId=linkedin-account-1",
+  );
+  assert.equal(Array.isArray(result.frequency), true);
+});
