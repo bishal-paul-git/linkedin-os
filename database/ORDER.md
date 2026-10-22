@@ -16,6 +16,7 @@ For a fresh environment apply:
 12. `010_zernio_hardening.sql`
 13. `011_fix_workspace_bootstrap.sql`
 14. `012_social_posts_and_zernio_external_sync.sql`
+15. `013_social_post_fk_indexes.sql`
 
 Then run:
 
