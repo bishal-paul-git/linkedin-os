@@ -2,7 +2,7 @@
 
 ## v1.5.0 — live product core
 
-LinkedIn OS now has a usable multi-user web product on top of the previously built operating-system/backend architecture.
+LinkedIn OS now has a usable multi-user web product on top of the operating-system/backend architecture.
 
 ### Live
 
@@ -38,9 +38,12 @@ Passed:
 Built:
 
 - Action Centre
+- Inbox & Conversations
 - Contacts & Memory
+- Tasks
 - Opportunities
 - Approval Queue
+- Content & Engagement
 - Workflows
 - interval schedules
 - workflow-run history
@@ -48,6 +51,10 @@ Built:
 - Security & Run Control
 - agent status
 - security-event view
+- Workspace Settings / Config
+- workspace member visibility
+
+The manual-first surfaces use the same persistent tables future LinkedIn/prospect/CRM adapters will write to, so later integrations do not need a second CRM or second workflow model.
 
 ### Workflow runtime
 
@@ -91,10 +98,10 @@ The system does not pretend a LinkedIn action happened merely because it was pre
 - database invariant tests passed
 - RLS isolation suite passed
 - scheduler/processor smoke test passed
-- Next.js production build: READY
+- current Next.js product-completeness build: READY
 - production login page: HTTP 200
-- protected anonymous route redirects to login
-- fresh Vercel runtime error window after auth hardening: no errors
+- new protected Inbox and Settings routes resolve through the auth guard
+- fresh Vercel runtime error window after the completeness build: no errors
 
 ### Intentionally later
 
