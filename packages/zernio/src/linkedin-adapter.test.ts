@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { ZernioLinkedInAdapter } from "./linkedin-adapter.ts";
+import { ZernioClient } from "./client.ts";
 import type { ApprovalAction } from "../../core/src/index.ts";
 
 function response(body: unknown, status = 200) {
@@ -72,4 +73,30 @@ test("never treats connection requests as a Zernio publishing capability", async
   const result = await adapter.execute({ ...action, actionType: "SEND_CONNECTION" });
   assert.equal(result.ok, false);
   assert.equal(result.blocked, true);
+});
+
+test("syncs external LinkedIn posts without publishing", async () => {
+  let calledUrl = "";
+  let payload: any;
+  const client = new ZernioClient("test-key", async (url, init) => {
+    calledUrl = url;
+    payload = JSON.parse(init?.body ?? "{}");
+    return response({
+      found: true,
+      post: {
+        platform: "linkedin",
+        platformPostId: "urn:li:share:123",
+        platformPostUrl: "https://www.linkedin.com/feed/update/urn:li:share:123",
+        analytics: { impressions: 25, likes: 3 },
+      },
+    });
+  });
+  const result = await client.syncExternalPosts({
+    accountId: "linkedin-account-1",
+    url: "https://www.linkedin.com/feed/update/urn:li:share:123",
+  });
+  assert.equal(calledUrl, "https://zernio.com/api/v1/posts/sync-external");
+  assert.equal(payload.accountId, "linkedin-account-1");
+  assert.equal(result.found, true);
+  assert.equal(result.post?.analytics?.impressions, 25);
 });
