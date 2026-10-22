@@ -72,8 +72,8 @@
 ## V1.7 — product expansion
 
 - [ ] team invitation UI
-- [ ] richer contact detail timeline
-- [ ] opportunity pipeline board
+- [x] richer contact detail timeline
+- [x] opportunity pipeline board
 - [ ] workflow builder/config editor
 - [ ] notification preferences
 - [ ] billing/plan layer if commercialized
