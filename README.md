@@ -22,8 +22,10 @@ https://github.com/bishal-paul-git/linkedin-os
 - Manager, Inbox, Network, Content, CRM and Approval Executor agents
 - Inbox / conversation memory
 - Contacts / relationship memory
+- contact-level relationship timeline
 - Tasks and next-action tracking
 - Opportunities
+- evidence-first opportunity pipeline
 - Content & Engagement
 - Approval Queue
 - Workspace Config / ICP / writing voice
