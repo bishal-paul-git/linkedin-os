@@ -55,6 +55,15 @@ export type ZernioFetch = (
   },
 ) => Promise<ZernioHttpResponse>;
 
+function query(params: Record<string, string | undefined>): string {
+  const values = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== "") values.set(key, value);
+  }
+  const encoded = values.toString();
+  return encoded ? "?" + encoded : "";
+}
+
 export class ZernioClient {
   constructor(
     private readonly apiKey: string,
@@ -111,6 +120,37 @@ export class ZernioClient {
         ...(input.postId ? { postId: input.postId } : {}),
       }),
     }) as Promise<ZernioExternalSyncResult>;
+  }
+
+  async getLinkedInAnalytics(input: {
+    accountId: string;
+    fromDate: string;
+    toDate: string;
+  }): Promise<Record<string, unknown>> {
+    return this.request("/analytics" + query({
+      platform: "linkedin",
+      accountId: input.accountId,
+      fromDate: input.fromDate,
+      toDate: input.toDate,
+    })) as Promise<Record<string, unknown>>;
+  }
+
+  async getBestTime(input: {
+    accountId: string;
+  }): Promise<Record<string, unknown>> {
+    return this.request("/analytics/best-time" + query({
+      platform: "linkedin",
+      accountId: input.accountId,
+    })) as Promise<Record<string, unknown>>;
+  }
+
+  async getPostingFrequency(input: {
+    accountId: string;
+  }): Promise<Record<string, unknown>> {
+    return this.request("/analytics/posting-frequency" + query({
+      platform: "linkedin",
+      accountId: input.accountId,
+    })) as Promise<Record<string, unknown>>;
   }
 
   async createLinkedInPost(input: {
