@@ -40,6 +40,9 @@ https://github.com/bishal-paul-git/linkedin-os
 - encrypted Zernio credential storage in Supabase Vault
 - multi-account personal/Page provider bindings
 - read-only provider account sync
+- normalized owned/external LinkedIn post history
+- stored account/post analytics snapshots
+- best-time and posting-frequency analytics sync
 - GitHub CI for typecheck, tests and web build
 
 ## Product navigation
@@ -51,6 +54,7 @@ https://github.com/bishal-paul-git/linkedin-os
 - Opportunities
 - Approvals
 - Content
+- LinkedIn Analytics
 - Workflows
 - Integrations & Capabilities
 - Security & Run Control
