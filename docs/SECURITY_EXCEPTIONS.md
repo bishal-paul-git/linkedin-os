@@ -9,6 +9,7 @@ Supabase's advisor reports authenticated-callable `SECURITY DEFINER` functions f
 - `public.li_zernio_sync_accounts`
 - `public.li_zernio_sync_external_posts`
 - `public.li_zernio_sync_account_analytics`
+- `public.li_zernio_sync_page_comments`
 
 These are intentional. Browser roles must not receive direct Vault-secret access, unrestricted HTTP-extension privileges, or the ability to bypass the first-workspace RLS bootstrap cycle.
 
@@ -37,7 +38,7 @@ All Zernio RPCs:
 
 Credential and provider-sync operations require **tenant Owner/Admin**.
 
-`li_zernio_sync_accounts`, `li_zernio_sync_external_posts`, and `li_zernio_sync_account_analytics` are provider-read/sync operations. They do not publish, edit, delete, DM, connect, or manage invitations.
+`li_zernio_sync_accounts`, `li_zernio_sync_external_posts`, `li_zernio_sync_account_analytics`, and `li_zernio_sync_page_comments` are provider-read/sync operations. They do not publish, edit, delete, DM, connect, or manage invitations.
 
 The analytics sync may write normalized internal post/metric snapshots after reading Zernio, but does not create public LinkedIn content.
 
@@ -48,6 +49,7 @@ The analytics sync may write normalized internal post/metric snapshots after rea
 - normal MEMBER was rejected from credential storage;
 - normal MEMBER was rejected from external-post sync;
 - normal MEMBER was rejected from account-analytics sync;
+- normal MEMBER was rejected from Page-comment sync;
 - QA first-workspace bootstrap succeeded and produced exactly one OWNER membership.
 
 Re-review these exceptions if the secret architecture, exposed Supabase schemas, or tenant-role model changes.
