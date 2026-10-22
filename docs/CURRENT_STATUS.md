@@ -64,6 +64,7 @@ Built:
 - Integrations UI for encrypted REST-key setup;
 - Content UI for organization post refresh and personal-post URL import;
 - Analytics UI for stored account/post metrics;
+- read-only organization Page comment monitoring and snapshot history;
 - mocked provider tests proving read methods do not publish and unsupported connection actions remain blocked.
 
 The ChatGPT Zernio connector and deployed web app are separate credential contexts. A ChatGPT connector session is not reused by Vercel.
@@ -111,6 +112,7 @@ Passed:
 - MEMBER denied credential storage;
 - MEMBER denied Zernio external-post sync;
 - MEMBER denied Zernio account-analytics sync;
+- MEMBER denied Zernio Page-comment sync;
 - Zernio integration-account/content/analytics RLS.
 
 Callable SECURITY DEFINER RPCs are intentional and documented in `docs/SECURITY_EXCEPTIONS.md`.
@@ -118,7 +120,7 @@ Callable SECURITY DEFINER RPCs are intentional and documented in `docs/SECURITY_
 ### Build verification
 
 - strict TypeScript check: pass
-- unit tests: **17/17 pass**
+- unit tests: **18/18 pass**
 - Zernio mocked read/publish-boundary tests: pass
 - Next.js production build: pass
 - GitHub CI: pass
@@ -131,5 +133,5 @@ Callable SECURITY DEFINER RPCs are intentional and documented in `docs/SECURITY_
 - perform the first authenticated no-publish account/content/analytics sync;
 - add a prospect-data adapter for Network discovery;
 - add CRM/email/calendar adapters where useful;
-- optionally surface organization Page comment reading/replies through an approved Zernio capability;
+- normalize/triage organization Page-comment payloads after the first live REST sync; keep replies/likes/deletes approval-gated and unimplemented until separately reviewed;
 - keep unsupported LinkedIn network/message actions approval-gated and assisted.
