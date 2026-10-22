@@ -15,6 +15,7 @@ For a fresh environment apply:
 11. `009_zernio_integration.sql`
 12. `010_zernio_hardening.sql`
 13. `011_fix_workspace_bootstrap.sql`
+14. `012_social_posts_and_zernio_external_sync.sql`
 
 Then run:
 
