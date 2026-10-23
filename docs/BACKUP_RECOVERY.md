@@ -44,6 +44,10 @@ Critical tables include:
 - li_social_analytics_snapshots
 - li_social_comment_snapshots
 - li_notification_preferences
+- li_prospect_candidates
+- li_notification_deliveries
+- li_notifications
+- li_team_invitations
 - li_activity_log
 - li_security_events
 
