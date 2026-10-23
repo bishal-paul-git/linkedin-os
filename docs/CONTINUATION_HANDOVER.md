@@ -2,19 +2,20 @@
 
 Use this file when continuing LinkedIn OS from ChatGPT Work, Claude Code, Codex or another development session.
 
-## Repository
+## Repository / runtime
 
-https://github.com/bishal-paul-git/linkedin-os
+- Repo: https://github.com/bishal-paul-git/linkedin-os
+- Branch: `main`
+- Live app: https://linkedin-os-delta.vercel.app
+- Public preview: https://linkedin-os-delta.vercel.app/dashboard
+- Supabase: `bishal-os` / `itauumqzqgewrfkoishh`
+- Vercel project: `linkedin-os`
 
-Default branch: `main`
-
-Live app: https://linkedin-os-delta.vercel.app
-
-Public preview: https://linkedin-os-delta.vercel.app/dashboard
+Current release metadata: **v1.6.0**
 
 ## Product definition
 
-LinkedIn OS is a multi-tenant relationship operating system, not a high-volume LinkedIn bot.
+LinkedIn OS is a multi-tenant LinkedIn relationship operating system, not a high-volume outreach bot.
 
 Core value:
 
@@ -24,13 +25,14 @@ Core value:
 - tasks/follow-ups;
 - opportunities;
 - content/engagement;
-- approval-gated actions;
+- approvals;
 - workflows/schedules;
 - analytics;
-- integration capability routing;
+- notifications;
+- capability-aware integrations;
 - audit/security controls.
 
-## Core agents
+## Agents
 
 - MANAGER
 - INBOX
@@ -39,50 +41,39 @@ Core value:
 - CRM
 - APPROVAL_EXECUTOR
 
-## Key state model
+## State model
 
-Network state:
-
+Network:
 `UNKNOWN → NOT_CONNECTED → INVITED → CONNECTED`
 
-Relationship stage:
-
+Relationship:
 `DISCOVERED → QUALIFIED → APPROVED → PREPARED → ENGAGED → ACTIVE → OPPORTUNITY`
 
-Do Not Contact is a separate safety flag.
-
-Opportunity stage:
-
+Opportunity:
 `SIGNAL → DISCOVERY → CONVERSATION → MEETING → QUALIFIED → PROPOSAL → NEGOTIATION → WON | LOST | DORMANT`
 
 Approval:
-
 `PENDING → APPROVED | REJECTED | EXPIRED`
 
 Execution:
-
 `NOT_READY → READY → RUNNING → SUCCEEDED | FAILED | BLOCKED`
 
-## Live infrastructure
+DNC remains a separate safety flag.
 
-Supabase project:
-
-- `bishal-os`
-- project ID `itauumqzqgewrfkoishh`
-
-Vercel project:
-
-- `linkedin-os`
-
-## Database
+## Latest database work
 
 Read `database/ORDER.md` before schema work.
 
-Latest material migration in this pass:
+Latest migrations:
 
-- `database/017_notification_preferences.sql`
+- 017 notification preferences
+- 018 team invitations
+- 019 invite acceptance fix
+- 020 in-app notifications
+- 021 prospect candidate staging
+- 022 official LinkedIn OAuth token storage
 
-Do not create parallel schemas for contacts, approvals, workflows, integrations or analytics.
+Do not create parallel schemas for contacts, approvals, workflows, integrations, notifications or prospect staging.
 
 ## Product screens
 
@@ -90,6 +81,7 @@ Private workspace:
 
 - Action Centre
 - Inbox
+- Network & Prospecting
 - Contacts
 - Contact timeline
 - Tasks
@@ -97,6 +89,7 @@ Private workspace:
 - Approval Queue
 - Content & Engagement
 - LinkedIn Analytics
+- Notifications
 - Workflows
 - Integrations & Capabilities
 - Security & Run Control
@@ -104,93 +97,131 @@ Private workspace:
 
 Anonymous:
 
-- safe demo Action Centre at `/dashboard`
+- safe sample-data Action Centre at `/dashboard`
 
-## Zernio
-
-Two runtimes remain separate:
-
-1. ChatGPT Zernio connector;
-2. standalone REST adapter used by deployed LinkedIn OS.
-
-Never assume the ChatGPT connector credential is available to Vercel.
-
-Standalone REST key:
-
-- stored in Supabase Vault;
-- only a Vault reference is stored in tenant integration rows;
-- provider syncs are Owner/Admin-only.
-
-Zernio is not a replacement for DMs, connections, invitation management, arbitrary feed access or prospect discovery.
-
-## Current safe defaults
-
-- external LinkedIn actions: BLOCKED;
-- approvals required by default;
-- security warnings override approvals;
-- never bypass CAPTCHA, verification, restrictions or platform protections;
-- unsupported capabilities stay assisted/unavailable.
-
-## Current feature state
+## Team/workspaces
 
 Built:
 
-- multi-tenant RLS;
-- auth/onboarding;
-- QA workspace;
-- dashboard + public demo preview;
-- contacts/timeline;
-- inbox memory;
-- tasks;
-- opportunities/pipeline;
-- approvals;
-- content;
-- analytics;
-- workflows/schedules;
-- workflow mode editor;
-- editable schedule controls;
-- integration capability registry;
-- Zernio provider package;
-- read-only account/post/analytics/Page-comment sync;
-- Run Control;
-- per-user notification preferences;
-- CI;
-- Vercel production deployment.
+- secure invite links;
+- hashed tokens;
+- expiry/revoke;
+- matching-email acceptance;
+- multi-workspace switcher.
+
+Email delivery is not required for invite acceptance; invite links are currently shared manually.
+
+## Notifications
+
+Built:
+
+- preferences;
+- in-app delivery;
+- DB fan-out;
+- read/dismiss/unread.
+
+Email and Discord remain future delivery adapters.
+
+## Network/prospecting
+
+Built:
+
+- `li_prospect_candidates`;
+- manual/batch list staging;
+- dedupe/qualification/CRM promotion;
+- typed provider-neutral adapter contract;
+- `@linkedin-os/prospecting` registry.
+
+Still missing:
+
+- a real licensed B2B prospect-data provider credential/adapter binding.
+
+## Zernio
+
+Keep two credential contexts separate:
+
+1. ChatGPT connector;
+2. deployed standalone REST adapter.
+
+The web product still needs its own dedicated Zernio REST key before first live product sync.
+
+Zernio does not replace DMs, connections, invitations or arbitrary prospect/feed access.
+
+## LinkedIn official
+
+Package:
+
+- `@linkedin-os/linkedin-official`
+
+Docs:
+
+- `docs/LINKEDIN_OFFICIAL_SETUP.md`
+- `docs/LINKEDIN_API_ACCESS_PLAN.md`
+
+Built:
+
+- OIDC + self-service OAuth client;
+- start/callback routes;
+- Vault token storage;
+- identity-only capability;
+- explicit personal publishing client transports.
+
+Current state:
+
+- code-ready;
+- **LinkedIn Developer App credentials not yet configured/proven**;
+- official member identity not live-connected;
+- OIDC `sub` is not assumed to be a Person URN;
+- direct official publishing not registered until author URN/transport validation;
+- Community Management not approved/connected.
+
+Never add DMs/connections/invitations to the self-service adapter unless LinkedIn explicitly grants the required access.
+
+## Safe defaults
+
+- external actions BLOCKED by default;
+- approval required;
+- security warnings override approval;
+- no CAPTCHA/restriction bypass;
+- unsupported capabilities remain assisted/unavailable.
+
+## Verification
+
+Verified implementation head before version/docs alignment:
+
+- `677ca665ad19cd4fbc4d5c0a7e8aba617a2d673a`
+- 30/30 unit tests PASS
+- TypeScript PASS
+- Next.js build PASS
+- GitHub CI SUCCESS
+
+Final v1.6 metadata/docs head must be re-verified before claiming release checkpoint.
 
 ## Immediate blockers
 
-1. No dedicated Zernio REST key has been bound to QA/permanent workspace yet.
-2. No prospect-data adapter is connected.
-3. No official LinkedIn OIDC/Share/Community Management adapter is implemented yet.
-4. DMs/connections/invitations remain restricted/assisted.
-5. Email/Discord notification delivery adapters are not connected.
+1. dedicated Zernio REST key for deployed product;
+2. LinkedIn Developer App client ID/secret + redirect setup;
+3. official member author URN/publishing transport verification;
+4. licensed B2B prospect-data provider;
+5. Email/Discord notification delivery adapters;
+6. Community Management application/approval;
+7. authenticated E2E browser QA.
 
-## Next recommended build order
+## Continuation procedure
 
-1. team invitation UI;
-2. notification delivery adapter abstraction;
-3. prospect-data adapter;
-4. official LinkedIn OIDC + Share adapter;
-5. prepare Community Management API application;
-6. monitoring/alert delivery;
-7. backup/restore rehearsal;
-8. authenticated end-to-end browser QA.
+Before changes:
 
-## Required continuation behavior
-
-Before changing code:
-
-1. read `README.md`;
-2. read `docs/CURRENT_STATUS.md`;
-3. read `docs/ROADMAP.md`;
-4. read `docs/PROGRESS_LOG.md`;
+1. read README;
+2. read CURRENT_STATUS;
+3. read ROADMAP;
+4. read PROGRESS_LOG;
 5. read this handover;
 6. inspect current `main`;
-7. inspect latest CI/deployment;
-8. never assume a feature is live merely because code exists.
+7. inspect latest CI/deployment.
 
 After changes:
 
-- commit verified changes;
-- update logs/status/roadmap;
-- report exact commit(s), tests, deployment and blockers.
+- commit verified code/migrations/docs;
+- run relevant security tests;
+- update canonical logs;
+- report exact commits, tests, deployment and blockers.

@@ -1,10 +1,10 @@
 # LinkedIn OS
 
-A reusable, multi-tenant LinkedIn relationship operating system with specialist agents, persistent memory, approval-gated actions, capability-aware adapters, scheduling, and a live web product.
+A reusable, multi-tenant LinkedIn relationship operating system with specialist agents, persistent memory, team workspaces, prospect staging, approval-gated actions, notifications, capability-aware adapters and scheduling.
 
 ## Current release
 
-**v1.5.0 — usable multi-tenant product core**
+**v1.6.0 — team/network/external-adapter foundation**
 
 Live app:
 
@@ -20,51 +20,39 @@ https://github.com/bishal-paul-git/linkedin-os
 
 ## What is built
 
-- Supabase Auth + workspace onboarding
-- tenant-isolated Postgres/Supabase memory
-- Owner/Admin/Member/Viewer RLS
+- Supabase Auth + tenant-isolated RLS
+- workspace onboarding + team invitations + workspace switching
 - Manager, Inbox, Network, Content, CRM and Approval Executor agents
-- Inbox / conversation memory
-- Contacts / relationship memory
-- contact-level relationship timeline
-- Tasks and next-action tracking
-- Opportunities
-- evidence-first opportunity pipeline
+- Inbox/conversation memory
+- Network prospect staging, qualification and CRM promotion
+- Contacts + relationship timeline
+- Tasks + Opportunity Pipeline
+- Approval Queue + Run Control
 - Content & Engagement
-- Approval Queue
-- Workspace Config / ICP / writing voice
-- Run Control
-- capability and integration registries
-- manual + scheduled workflow runs
-- workflow mode/limit editor
-- editable schedule controls
-- internal pg_cron scheduler and workflow processor
-- assisted/manual completion for unsupported external actions
-- activity log + security events
-- responsive Next.js dashboard
+- LinkedIn analytics
+- in-app notifications + per-user preferences
+- workflow editor + schedules + pg_cron processor
+- integration/capability registries
+- Zernio provider package with Vault credentials and read-sync layers
+- official LinkedIn self-service package with OAuth/OIDC scaffold
+- provider-neutral prospecting package
 - concrete Supabase repository adapter
 - idempotency, approval fingerprints, worker leases and workflow lineage
-- Zernio provider package for owned LinkedIn publishing/analytics
-- encrypted Zernio credential storage in Supabase Vault
-- multi-account personal/Page provider bindings
-- read-only provider account sync
-- normalized owned/external LinkedIn post history
-- stored account/post analytics snapshots
-- best-time and posting-frequency analytics sync
-- read-only organization Page comment monitoring
-- per-user notification preferences
-- GitHub CI for typecheck, tests and web build
+- public sample-data dashboard preview
+- CI for typecheck, tests and production web build
 
 ## Product navigation
 
 - Action Centre
 - Inbox
+- Network
 - Contacts
 - Tasks
 - Opportunities
 - Approvals
 - Content
 - LinkedIn Analytics
+- Notifications
 - Workflows
 - Integrations & Capabilities
 - Security & Run Control
@@ -73,40 +61,62 @@ https://github.com/bishal-paul-git/linkedin-os
 ## Execution model
 
 ```text
-Tenant
+Tenant / Workspace
   ↓
-Agents + Memory
+Agents + Persistent Memory
   ↓
 Workflow Run
   ↓
 Approval Queue
   ↓
 Run Control + Capability Resolver
-  ├─ Official adapter
+  ├─ Healthy authorized official adapter
+  ├─ Provider adapter
   ├─ Assisted/manual completion
   └─ Blocked/unavailable
 ```
 
-Zernio is treated as an owned-account publishing/analytics adapter, not as a replacement for LinkedIn DMs, connections, invitation management or prospect discovery.
+No adapter bypasses Run Control, exact approval or security blockers.
 
-External actions never bypass Run Control or exact Approval Queue approval.
+## Current integration state
+
+### Zernio
+
+Built, but the deployed product still needs its own dedicated REST key before the first live product sync.
+
+### LinkedIn official
+
+The OAuth/OIDC/self-service package is built, but LinkedIn Developer App credentials are not yet configured/proven. Identity connection and direct official publishing must not be described as live yet.
+
+Direct personal publishing remains disabled until the real member author Person URN and provisioned publishing transport are verified.
+
+DMs, connections and invitations are not part of the self-service adapter.
+
+### Prospect data
+
+The staging model and provider-neutral registry are built. A real licensed B2B discovery provider is still to be connected.
 
 ## Security
 
-RLS is enabled and tested. External credentials are not committed to this public repository. Zernio REST keys are stored in Supabase Vault and only Vault references are stored with tenant integration rows.
+- RLS enabled/tested
+- provider OAuth/API tokens stored through Supabase Vault
+- team invite tokens stored hashed
+- privileged RPCs narrowly scoped and reviewed
+- no credentials committed to this public repo
+- unsupported LinkedIn capabilities remain assisted/unavailable
 
 See:
 
-- [docs/CURRENT_STATUS.md](docs/CURRENT_STATUS.md)
-- [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md)
-- [docs/CONTINUATION_HANDOVER.md](docs/CONTINUATION_HANDOVER.md)
-- [docs/BACKUP_RECOVERY.md](docs/BACKUP_RECOVERY.md)
-- [docs/AUDIT_RETENTION.md](docs/AUDIT_RETENTION.md)
-- [docs/ZERNIO_SETUP.md](docs/ZERNIO_SETUP.md)
-- [docs/SECURITY_EXCEPTIONS.md](docs/SECURITY_EXCEPTIONS.md)
-- [docs/AUTH_SETUP.md](docs/AUTH_SETUP.md)
-- [docs/OPERATIONS.md](docs/OPERATIONS.md)
-- [database/ORDER.md](database/ORDER.md)
+- [Current status](docs/CURRENT_STATUS.md)
+- [Progress log](docs/PROGRESS_LOG.md)
+- [Continuation handover](docs/CONTINUATION_HANDOVER.md)
+- [LinkedIn official setup](docs/LINKEDIN_OFFICIAL_SETUP.md)
+- [LinkedIn API access plan](docs/LINKEDIN_API_ACCESS_PLAN.md)
+- [Zernio setup](docs/ZERNIO_SETUP.md)
+- [Security exceptions](docs/SECURITY_EXCEPTIONS.md)
+- [Backup/recovery](docs/BACKUP_RECOVERY.md)
+- [Audit retention](docs/AUDIT_RETENTION.md)
+- [Database order](database/ORDER.md)
 
 ## Development
 
@@ -116,4 +126,4 @@ npm run check
 npm run build:web
 ```
 
-Never commit OAuth tokens, API keys, browser sessions, private CRM data, LinkedIn messages or external-provider secrets to this repository.
+Never commit OAuth tokens, API keys, browser sessions, private CRM data, LinkedIn messages or external-provider secrets.

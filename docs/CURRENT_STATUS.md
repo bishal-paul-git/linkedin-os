@@ -1,156 +1,183 @@
 # Current Status
 
-## v1.5.0 — live product core + read-only Zernio content/analytics layer
+## v1.6.0 — team workspaces + notifications + Network staging + official LinkedIn scaffold
 
-LinkedIn OS is a usable multi-user web product with tenant-isolated memory, agents, approvals, workflows and capability-aware integrations.
+LinkedIn OS is a live multi-tenant relationship operating system with persistent CRM memory, specialist agents, approval-gated workflows, capability-aware adapters and a public demo preview.
 
-### Live
+## Live
 
-- Web app: https://linkedin-os-delta.vercel.app
+- App: https://linkedin-os-delta.vercel.app
+- Public preview: https://linkedin-os-delta.vercel.app/dashboard
 - Source: https://github.com/bishal-paul-git/linkedin-os
-- Supabase/Postgres backend: live
-- Vercel production deployment: READY
-- Public dashboard preview: https://linkedin-os-delta.vercel.app/dashboard
+- Supabase/Postgres: live
+- Vercel production: live
 
-### Product UI
+## Product UI
 
 Built:
 
 - Action Centre
 - Inbox & Conversations
+- Network & Prospecting
 - Contacts & Memory
 - contact relationship timeline
 - Tasks
-- Opportunities
-- evidence-first opportunity pipeline board
+- evidence-first Opportunity Pipeline
 - Approval Queue
 - Content & Engagement
 - LinkedIn Analytics
-- Workflows and schedules
-- workflow mode/limit editor
-- editable schedule controls
+- Notifications
+- Workflows + schedules + workflow mode/limit editor
 - Integrations & Capabilities
 - Security & Run Control
-- Workspace Settings / Config
-- per-user notification preferences
+- Workspace Settings
+- notification preferences
+- team invitation management
+- workspace switcher
 
-### QA workspace
+The anonymous `/dashboard` preview uses sample data only; private routes remain authenticated.
 
-A disposable production QA identity/workspace exists for testing.
+## Team workspaces
 
-Verified under that QA user's RLS context:
+Built and database-tested:
 
-- one visible tenant;
-- one active OWNER membership;
-- six agent settings;
-- six workflow settings;
-- eleven default capabilities;
-- external LinkedIn actions remain BLOCKED.
+- secure invite links;
+- ADMIN/MEMBER/VIEWER invite roles;
+- hashed invite tokens;
+- expiry/revocation;
+- matching-email acceptance;
+- login/signup return-to invite;
+- membership creation after acceptance;
+- multi-workspace selection through an HttpOnly workspace cookie.
 
-The first-workspace RLS bootstrap bug found during QA was fixed.
+Rollback tests passed for correct-email acceptance, wrong-email rejection and membership creation.
 
-### Zernio layer
+## In-app notifications
+
+Built and tested:
+
+- per-user notification preferences;
+- in-app notification centre;
+- unread count;
+- read/dismiss/mark-all-read;
+- DB fan-out for:
+  - pending approvals;
+  - failed/blocked workflows;
+  - unresolved security events;
+  - new opportunity signals.
+
+Rollback isolation test passed: tenant member received the synthetic event and unrelated authenticated identity saw zero notifications.
+
+Email/Discord remain preference/delivery targets only; no external delivery adapter is connected yet.
+
+## Network / prospecting
 
 Built:
 
-- reusable `@linkedin-os/zernio` provider package;
-- personal vs organization account binding;
-- `li_integration_accounts` with tenant RLS;
-- Supabase Vault credential storage;
-- read-only account discovery/sync;
-- external LinkedIn post import/discovery;
-- normalized `li_social_posts`;
-- historical `li_social_analytics_snapshots`;
-- read-only 30-day account analytics sync;
-- best-time snapshot sync;
-- posting-frequency snapshot sync;
-- personal LinkedIn publishing capability mapping;
-- organization Page publishing capability mapping;
-- account/post analytics capability registration;
-- Integrations UI for encrypted REST-key setup;
-- Content UI for organization post refresh and personal-post URL import;
-- Analytics UI for stored account/post metrics;
-- read-only organization Page comment monitoring and snapshot history;
-- mocked provider tests proving read methods do not publish and unsupported connection actions remain blocked.
+- tenant-scoped `li_prospect_candidates`;
+- safe manual/batch import up to 100 rows;
+- stable dedupe;
+- evidence/reason capture;
+- STRONG_FIT / GOOD_FIT / WEAK_FIT / REJECT review;
+- only qualified Strong/Good candidates can promote into CRM;
+- CRM promotion preserves the refined state model;
+- provider-neutral `ProspectDataAdapter` contract;
+- prospect adapter registry with health checks, normalization, LinkedIn URL cleanup, dedupe and bounded result sizes.
 
-The ChatGPT Zernio connector and deployed web app are separate credential contexts. A ChatGPT connector session is not reused by Vercel.
+No LinkedIn scraping or outbound action is performed by candidate staging/promotion.
 
-No LinkedIn post, comment, DM, reaction or connection request was sent during this build/review.
+A real licensed B2B discovery provider is still not connected.
 
-### Provider behavior modeled correctly
+## Zernio
 
-- Organization Page external posts can be refreshed without a post URL when supported by Zernio/LinkedIn.
-- Personal historical posts published outside Zernio require a LinkedIn post URL/URN for import.
-- Empty provider history produces an honest empty state rather than fabricated analytics.
-- Best-time/frequency recommendations remain empty until enough provider analytics exists.
+Built:
 
-### Current standalone binding blocker
+- `@linkedin-os/zernio`;
+- Vault credential storage;
+- personal/Page account model;
+- read-only account sync;
+- external/owned post sync;
+- analytics snapshots;
+- best-time/frequency snapshots;
+- read-only Page comment monitoring;
+- publishing adapter architecture;
+- Owner/Admin-only provider sync.
 
-The product code and QA workspace exist.
+The ChatGPT Zernio connector and deployed REST integration are separate credential contexts.
 
-The remaining standalone Zernio requirement is:
+Standalone product blocker:
 
-1. create a dedicated Zernio REST API key;
-2. enter it through the LinkedIn OS Integrations screen;
-3. run the read-only account sync;
-4. verify the expected personal/Page bindings;
-5. run read-only content/analytics sync.
+- a dedicated Zernio REST key still must be connected to QA/permanent workspace before first live product sync.
 
-### Zernio does not replace
+No LinkedIn post, comment, reaction, DM, connection request or invitation action was sent during these build/review passes.
 
-- LinkedIn DMs;
-- connection requests;
-- invitation management;
-- arbitrary prospect discovery;
-- arbitrary LinkedIn feed scraping.
+## LinkedIn Official
 
-Those remain assisted/browser-based or require another authorized provider.
+Built in code:
 
-### Security verification
+- `@linkedin-os/linkedin-official`;
+- OpenID Connect authorization URL;
+- authorization-code exchange;
+- OIDC userinfo;
+- server-side OAuth start/callback routes;
+- OAuth state protection with short-lived HttpOnly cookies;
+- access-token storage in Supabase Vault;
+- official identity capability registration;
+- personal-post client for explicit `ugcPosts` and versioned `posts` transports;
+- hard blocks for unsupported DM/connection/invitation actions.
+
+Important current state:
+
+- LinkedIn Developer App credentials are **not yet configured/proven in Vercel**;
+- official identity is therefore **credential-blocked**, not live-connected;
+- OIDC `sub` is not treated as a LinkedIn Person URN;
+- direct official personal publishing is **not enabled** until the member author URN and real provisioned transport are verified;
+- Community Management access is **not approved or connected**.
+
+See:
+
+- `docs/LINKEDIN_OFFICIAL_SETUP.md`
+- `docs/LINKEDIN_API_ACCESS_PLAN.md`
+
+## Security verification
 
 Passed:
 
-- tenant RLS isolation;
-- Owner/Admin/Member/Viewer rules;
-- approval invalidation and idempotency;
-- Vault credential round-trip;
-- plaintext credential absent from integration records;
-- MEMBER denied credential storage;
-- MEMBER denied Zernio external-post sync;
-- MEMBER denied Zernio account-analytics sync;
-- MEMBER denied Zernio Page-comment sync;
-- Zernio integration-account/content/analytics RLS.
-- Notification preference RLS: owner self-write/read pass; unrelated authenticated identity sees zero rows.
+- tenant RLS;
+- Owner/Admin/Member/Viewer boundaries;
+- approval invalidation/idempotency;
+- notification preference isolation;
+- in-app notification isolation;
+- Zernio credential/sync role checks;
+- team invite acceptance/email checks;
+- official OAuth non-admin denial;
+- official OAuth Vault-reference storage;
+- direct official publishing remains unregistered after identity-only OAuth.
 
-Callable SECURITY DEFINER RPCs are intentional and documented in `docs/SECURITY_EXCEPTIONS.md`.
+Callable privileged RPCs are documented in `docs/SECURITY_EXCEPTIONS.md`.
 
-### Build verification
+## Build verification
 
-- strict TypeScript check: pass
-- unit tests: **18/18 pass**
-- Zernio mocked read/publish-boundary tests: pass
-- Next.js production build: pass
-- GitHub CI: pass
-- Vercel product build: READY
-- Analytics screen production build: READY
+Verified implementation head before v1.6 metadata/docs alignment:
 
-### Remaining next work
+- `677ca665ad19cd4fbc4d5c0a7e8aba617a2d673a`
 
-- bind a dedicated Zernio REST key to QA or the permanent workspace;
-- perform the first authenticated no-publish account/content/analytics sync;
-- add a prospect-data adapter for Network discovery;
-- add CRM/email/calendar adapters where useful;
-- normalize/triage organization Page-comment payloads after the first live REST sync; keep replies/likes/deletes approval-gated and unimplemented until separately reviewed;
-- keep unsupported LinkedIn network/message actions approval-gated and assisted.
+Results:
 
+- strict TypeScript: PASS
+- unit tests: **30/30 PASS**
+- Next.js production build: PASS
+- GitHub CI: SUCCESS
 
-### Repository handover
+The final v1.6 documentation/version head must also pass CI/Vercel before being stamped as the release checkpoint.
 
-Canonical continuation files now exist:
+## Remaining blockers / next work
 
-- `docs/PROGRESS_LOG.md`
-- `docs/CONTINUATION_HANDOVER.md`
-- `docs/BACKUP_RECOVERY.md`
-- `docs/AUDIT_RETENTION.md`
-
-Future development should update these files together with CURRENT_STATUS and ROADMAP.
+- connect a dedicated Zernio REST key and run first authenticated no-publish product sync;
+- create/configure LinkedIn Developer App credentials in Vercel and run first official identity OAuth;
+- verify a real member author URN + publishing transport before registering direct official publishing;
+- connect a licensed B2B prospect-data provider to the provider-neutral Network adapter;
+- add Email/Discord notification delivery adapters if desired;
+- prepare/submit Community Management API application;
+- authenticated end-to-end browser QA;
+- backup/restore rehearsal.
