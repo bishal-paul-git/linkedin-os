@@ -22,6 +22,7 @@ For a fresh environment apply:
 18. `016_zernio_page_comment_monitoring.sql`
 19. `017_notification_preferences.sql`
 20. `018_team_invitations.sql`
+21. `019_fix_team_invitation_acceptance.sql`
 
 Then run:
 
