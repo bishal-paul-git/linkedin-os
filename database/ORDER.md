@@ -25,6 +25,7 @@ For a fresh environment apply:
 21. `019_fix_team_invitation_acceptance.sql`
 22. `020_in_app_notifications.sql`
 23. `021_prospect_candidate_staging.sql`
+24. `022_linkedin_official_oauth.sql`
 
 Then run:
 
