@@ -126,3 +126,21 @@ For every future material build:
 5. run RLS/security tests for auth/data changes;
 6. update CURRENT_STATUS, ROADMAP and this progress log;
 7. never put credentials, private relationship data, connector sessions or user secrets in this public repository.
+
+### Verification checkpoint
+
+Verified implementation head:
+
+- `28df44fcf7d01b68c6bcde7c2bcce8a8bb8f3031`
+
+Results:
+
+- GitHub CI verify job: SUCCESS;
+- TypeScript/unit-test step: SUCCESS;
+- web production build step: SUCCESS;
+- Vercel production deployment: READY;
+- production aliases include `linkedin-os-delta.vercel.app`;
+- no recent Vercel runtime errors in the checked window;
+- Supabase migration history includes `linkedin_os_notification_preferences`;
+- notification RLS rollback test passed for owner self-access and outsider isolation.
+
