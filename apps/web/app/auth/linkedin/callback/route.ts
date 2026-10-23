@@ -1,4 +1,5 @@
 import{NextResponse}from"next/server";
+import{cookies}from"next/headers";
 import{LinkedInOfficialClient}from"@linkedin-os/linkedin-official";
 import{createClient}from"@/lib/supabase/server";
 
@@ -12,12 +13,11 @@ export async function GET(req:Request){
   const s=await createClient(),{data:{user}}=await s.auth.getUser();
   if(!user)return NextResponse.redirect(new URL("/login?next="+encodeURIComponent("/integrations"),u.origin));
 
-  const cookieHeader=req.headers.get("cookie")??"";
-  const cookies=new Map(cookieHeader.split(";").map(v=>v.trim().split("=").map(decodeURIComponent) as [string,string]));
-  const expectedState=cookies.get("li_linkedin_oauth_state");
-  const integrationId=cookies.get("li_linkedin_oauth_integration");
-  const tenantId=cookies.get("li_linkedin_oauth_tenant");
-  const redirectUri=cookies.get("li_linkedin_oauth_redirect")??process.env.LINKEDIN_REDIRECT_URI??u.origin+"/auth/linkedin/callback";
+  const jar=await cookies();
+  const expectedState=jar.get("li_linkedin_oauth_state")?.value;
+  const integrationId=jar.get("li_linkedin_oauth_integration")?.value;
+  const tenantId=jar.get("li_linkedin_oauth_tenant")?.value;
+  const redirectUri=jar.get("li_linkedin_oauth_redirect")?.value??process.env.LINKEDIN_REDIRECT_URI??u.origin+"/auth/linkedin/callback";
 
   if(!code||!state||!expectedState||state!==expectedState||!integrationId||!tenantId){
     return clearOAuthCookies(NextResponse.redirect(new URL("/integrations?linkedin=oauth_state_error",u.origin)));
