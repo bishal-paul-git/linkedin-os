@@ -74,8 +74,8 @@
 - [ ] team invitation UI
 - [x] richer contact detail timeline
 - [x] opportunity pipeline board
-- [ ] workflow builder/config editor
-- [ ] notification preferences
+- [x] workflow builder/config editor
+- [x] notification preferences
 - [ ] billing/plan layer if commercialized
 - [ ] admin/support tooling
 
@@ -87,6 +87,6 @@
 - [x] repository-wide CI
 - [ ] Zernio token/key replacement and failure-path live test with a real workspace
 - [ ] end-to-end authenticated browser test with a real test workspace
-- [ ] audit retention policy
-- [ ] backups/recovery runbook
+- [x] audit retention policy
+- [x] backups/recovery runbook
 - [ ] monitoring/alerts
