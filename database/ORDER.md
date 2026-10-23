@@ -21,6 +21,7 @@ For a fresh environment apply:
 17. `015_zernio_read_sync_admin_only.sql`
 18. `016_zernio_page_comment_monitoring.sql`
 19. `017_notification_preferences.sql`
+20. `018_team_invitations.sql`
 
 Then run:
 
