@@ -72,6 +72,8 @@ Latest migrations:
 - 020 in-app notifications
 - 021 prospect candidate staging
 - 022 official LinkedIn OAuth token storage
+- 023 prepare-only Connection Review processor
+- 024 notification delivery outbox
 
 Do not create parallel schemas for contacts, approvals, workflows, integrations, notifications or prospect staging.
 
@@ -120,7 +122,9 @@ Built:
 - DB fan-out;
 - read/dismiss/unread.
 
-Email and Discord remain future delivery adapters.
+Delivery outbox is live. IN_APP is recorded as SENT; selected Email/Discord deliveries stay WAITING_ADAPTER until a real provider is connected.
+
+`@linkedin-os/notifications` contains the provider-neutral delivery registry.
 
 ## Network/prospecting
 
@@ -135,6 +139,12 @@ Built:
 Still missing:
 
 - a real licensed B2B prospect-data provider credential/adapter binding.
+
+Connection Review is implemented for already-staged candidates:
+
+`Strong/Good candidate → CRM reconcile → DNC/state checks → exact PENDING SEND_CONNECTION approval`
+
+It is prepare-only and must never set network state to INVITED before verified execution.
 
 ## Zernio
 
@@ -203,7 +213,7 @@ Final v1.6 metadata/docs head must be re-verified before claiming release checkp
 2. LinkedIn Developer App client ID/secret + redirect setup;
 3. official member author URN/publishing transport verification;
 4. licensed B2B prospect-data provider;
-5. Email/Discord notification delivery adapters;
+5. Email/Discord provider binding for the existing delivery outbox;
 6. Community Management application/approval;
 7. authenticated E2E browser QA.
 
