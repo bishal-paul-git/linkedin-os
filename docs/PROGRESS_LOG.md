@@ -153,6 +153,59 @@ Supabase advisor review:
 - callable invite/OAuth `SECURITY DEFINER` RPCs are intentional and documented;
 - unrelated legacy project warnings were not modified.
 
+### Connection Review runtime
+
+Migration:
+
+- `023_connection_review_processor.sql`
+
+Built and tested:
+
+- queued/manual Connection Review now performs useful prepare-only work;
+- Strong/Good staged candidates reconcile into CRM;
+- exact `SEND_CONNECTION` approvals are created as `PENDING / NOT_READY`;
+- no generic connection note is fabricated;
+- Do Not Contact is skipped;
+- existing INVITED/CONNECTED or later-stage relationships are skipped;
+- missing LinkedIn target URL is skipped;
+- stable idempotency prevents duplicate approvals;
+- `network_state` stays UNKNOWN/NOT_CONNECTED until verified external completion.
+
+Rollback invariants passed:
+
+- one qualifying candidate → one pending approval;
+- DNC → zero approvals;
+- rerun → still one approval;
+- candidate promoted to CRM;
+- queued workflow run → SUCCEEDED with "No LinkedIn action was sent";
+- contact after preparation → UNKNOWN / PREPARED, not INVITED.
+
+### Notification delivery outbox
+
+Migration:
+
+- `024_notification_delivery_outbox.sql`
+
+Package:
+
+- `@linkedin-os/notifications`
+
+Built:
+
+- explicit per-channel delivery rows;
+- IN_APP recorded as SENT;
+- EMAIL/DISCORD recorded as WAITING_ADAPTER until a real provider is connected;
+- provider-neutral adapter registry with health/fallback handling;
+- Notifications UI shows channel delivery state.
+
+Rollback tests passed:
+
+- three expected channel rows when all channels are selected;
+- IN_APP SENT with delivery timestamp;
+- EMAIL/DISCORD WAITING_ADAPTER;
+- owner can read own delivery rows;
+- unrelated authenticated identity sees zero rows.
+
 ### Safety boundary
 
 No LinkedIn post, DM, connection request, invitation action, reaction or comment was sent during this build pass.
