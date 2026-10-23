@@ -123,10 +123,10 @@ begin
 
   insert into public.li_tenant_members(tenant_id,user_id,role,status)
   values(v_inv.tenant_id,v_uid,v_inv.role,'ACTIVE')
-  on conflict(tenant_id,user_id) do update set status='ACTIVE';
+  on conflict on constraint li_tenant_members_tenant_id_user_id_key do update set status='ACTIVE';
 
-  select role into v_role from public.li_tenant_members
-  where tenant_id=v_inv.tenant_id and user_id=v_uid;
+  select m.role into v_role from public.li_tenant_members m
+  where m.tenant_id=v_inv.tenant_id and m.user_id=v_uid;
 
   update public.li_team_invitations
   set status='ACCEPTED',accepted_by=v_uid,accepted_at=now(),updated_at=now()
