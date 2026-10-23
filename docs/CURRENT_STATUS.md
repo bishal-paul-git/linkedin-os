@@ -10,6 +10,7 @@ LinkedIn OS is a usable multi-user web product with tenant-isolated memory, agen
 - Source: https://github.com/bishal-paul-git/linkedin-os
 - Supabase/Postgres backend: live
 - Vercel production deployment: READY
+- Public dashboard preview: https://linkedin-os-delta.vercel.app/dashboard
 
 ### Product UI
 
@@ -26,9 +27,12 @@ Built:
 - Content & Engagement
 - LinkedIn Analytics
 - Workflows and schedules
+- workflow mode/limit editor
+- editable schedule controls
 - Integrations & Capabilities
 - Security & Run Control
 - Workspace Settings / Config
+- per-user notification preferences
 
 ### QA workspace
 
@@ -116,6 +120,7 @@ Passed:
 - MEMBER denied Zernio account-analytics sync;
 - MEMBER denied Zernio Page-comment sync;
 - Zernio integration-account/content/analytics RLS.
+- Notification preference RLS: owner self-write/read pass; unrelated authenticated identity sees zero rows.
 
 Callable SECURITY DEFINER RPCs are intentional and documented in `docs/SECURITY_EXCEPTIONS.md`.
 
@@ -137,3 +142,15 @@ Callable SECURITY DEFINER RPCs are intentional and documented in `docs/SECURITY_
 - add CRM/email/calendar adapters where useful;
 - normalize/triage organization Page-comment payloads after the first live REST sync; keep replies/likes/deletes approval-gated and unimplemented until separately reviewed;
 - keep unsupported LinkedIn network/message actions approval-gated and assisted.
+
+
+### Repository handover
+
+Canonical continuation files now exist:
+
+- `docs/PROGRESS_LOG.md`
+- `docs/CONTINUATION_HANDOVER.md`
+- `docs/BACKUP_RECOVERY.md`
+- `docs/AUDIT_RETENTION.md`
+
+Future development should update these files together with CURRENT_STATUS and ROADMAP.
