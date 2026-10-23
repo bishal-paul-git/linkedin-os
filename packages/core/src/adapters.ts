@@ -17,10 +17,42 @@ export interface LinkedInAdapter {
   healthCheck(): Promise<{ ok: boolean; reason?: string }>;
 }
 
+export interface ProspectSearchInput {
+  query?: string;
+  roles?: string[];
+  industries?: string[];
+  locations?: string[];
+  companyNames?: string[];
+  companySizes?: string[];
+  keywords?: string[];
+  limit?: number;
+  cursor?: string | null;
+}
+
+export interface ProspectCandidate {
+  externalId?: string | null;
+  name: string;
+  roleTitle?: string | null;
+  company?: string | null;
+  location?: string | null;
+  linkedInUrl?: string | null;
+  reason?: string | null;
+  evidence?: Record<string, unknown>;
+  rawData?: Record<string, unknown>;
+}
+
+export interface ProspectSearchResult {
+  source: string;
+  candidates: ProspectCandidate[];
+  nextCursor?: string | null;
+  metadata?: Record<string, unknown>;
+}
+
 export interface ProspectDataAdapter {
   id: string;
   tenantId: TenantId;
-  search(input: Record<string, unknown>): Promise<Array<Record<string, unknown>>>;
+  search(input: ProspectSearchInput): Promise<ProspectSearchResult>;
+  healthCheck(): Promise<{ ok: boolean; reason?: string }>;
 }
 
 export interface MemoryStore {
