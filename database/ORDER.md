@@ -27,6 +27,7 @@ For a fresh environment apply:
 23. `021_prospect_candidate_staging.sql`
 24. `022_linkedin_official_oauth.sql`
 25. `023_connection_review_processor.sql`
+26. `024_notification_delivery_outbox.sql`
 
 Then run:
 
