@@ -51,6 +51,8 @@
 - [x] Notifications centre
 - [x] unread/read/dismiss controls
 - [x] tenant-isolation rollback test
+- [x] notification delivery outbox
+- [x] provider-neutral notification adapter registry
 - [ ] Email notification delivery adapter
 - [ ] Discord notification delivery adapter
 
@@ -63,6 +65,10 @@
 - [x] Strong/Good-only CRM promotion
 - [x] typed provider-neutral ProspectDataAdapter
 - [x] normalization/dedupe/health registry
+- [x] prepare-only Connection Review processor
+- [x] Strong/Good → CRM → PENDING SEND_CONNECTION approval flow
+- [x] DNC / invited / connected skip rules
+- [x] stable connection-approval idempotency
 - [ ] connect first licensed B2B prospect-data provider
 
 ### Zernio
