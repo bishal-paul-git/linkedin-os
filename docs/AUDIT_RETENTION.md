@@ -14,6 +14,8 @@ Retain:
 - activity log: 180 days;
 - analytics snapshots: 180 days;
 - raw provider-sync snapshots: 90 days unless needed longer;
+- notifications and notification delivery rows: 90 days after resolution/read unless tenant policy requires longer;
+- rejected/unpromoted prospect candidate staging: 90 days by default;
 - transient test/QA data: remove when no longer needed;
 - credentials: no historical plaintext retention; only current encrypted Vault secret.
 
