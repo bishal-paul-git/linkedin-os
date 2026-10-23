@@ -52,3 +52,20 @@ Security warnings override approvals.
 Do not bypass CAPTCHA, identity verification, restrictions, access controls or platform protections.
 
 Record meaningful blockers in `li_security_events`.
+
+
+## Continuation records
+
+Before substantial work, read:
+
+- `docs/CURRENT_STATUS.md`
+- `docs/ROADMAP.md`
+- `docs/PROGRESS_LOG.md`
+- `docs/CONTINUATION_HANDOVER.md`
+
+Operational policy references:
+
+- `docs/BACKUP_RECOVERY.md`
+- `docs/AUDIT_RETENTION.md`
+
+Update these after material production changes.
