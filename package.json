@@ -3,7 +3,7 @@
   "workspaces":["packages/*","apps/*"],
   "scripts":{
     "typecheck":"tsc -p tsconfig.json --noEmit",
-    "test":"node --experimental-transform-types --test packages/core/src/capability-resolver.test.ts packages/core/src/state-machine.test.ts packages/core/src/approval.test.ts packages/server/src/execution-service.test.ts packages/zernio/src/linkedin-adapter.test.ts",
+    "test":"node --experimental-transform-types --test packages/core/src/capability-resolver.test.ts packages/core/src/state-machine.test.ts packages/core/src/approval.test.ts packages/server/src/execution-service.test.ts packages/zernio/src/linkedin-adapter.test.ts packages/linkedin-official/src/linkedin-adapter.test.ts",
     "check":"npm run typecheck && npm test",
     "build:web":"npm run build --workspace @linkedin-os/web"
   },
