@@ -22,7 +22,12 @@ Added:
 - official identity-only capability registration;
 - explicit personal publishing transports with hard blocks for unsupported actions;
 - LinkedIn official setup and API-access plan;
-- migrations 018–022.
+- migrations 018–022;
+- prepare-only Connection Review processor with DNC/state/idempotency guards;
+- Network-screen Connection Review run control;
+- notification delivery outbox with explicit channel states;
+- `@linkedin-os/notifications` provider-neutral delivery registry;
+- migrations 023–024.
 
 Fixed:
 
