@@ -10,6 +10,10 @@ Live app:
 
 https://linkedin-os-delta.vercel.app
 
+Public preview:
+
+https://linkedin-os-delta.vercel.app/dashboard
+
 Source:
 
 https://github.com/bishal-paul-git/linkedin-os
@@ -32,6 +36,8 @@ https://github.com/bishal-paul-git/linkedin-os
 - Run Control
 - capability and integration registries
 - manual + scheduled workflow runs
+- workflow mode/limit editor
+- editable schedule controls
 - internal pg_cron scheduler and workflow processor
 - assisted/manual completion for unsupported external actions
 - activity log + security events
@@ -46,6 +52,7 @@ https://github.com/bishal-paul-git/linkedin-os
 - stored account/post analytics snapshots
 - best-time and posting-frequency analytics sync
 - read-only organization Page comment monitoring
+- per-user notification preferences
 - GitHub CI for typecheck, tests and web build
 
 ## Product navigation
@@ -91,6 +98,10 @@ RLS is enabled and tested. External credentials are not committed to this public
 See:
 
 - [docs/CURRENT_STATUS.md](docs/CURRENT_STATUS.md)
+- [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md)
+- [docs/CONTINUATION_HANDOVER.md](docs/CONTINUATION_HANDOVER.md)
+- [docs/BACKUP_RECOVERY.md](docs/BACKUP_RECOVERY.md)
+- [docs/AUDIT_RETENTION.md](docs/AUDIT_RETENTION.md)
 - [docs/ZERNIO_SETUP.md](docs/ZERNIO_SETUP.md)
 - [docs/SECURITY_EXCEPTIONS.md](docs/SECURITY_EXCEPTIONS.md)
 - [docs/AUTH_SETUP.md](docs/AUTH_SETUP.md)
