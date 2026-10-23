@@ -68,7 +68,14 @@ Built and tested:
 
 Rollback isolation test passed: tenant member received the synthetic event and unrelated authenticated identity saw zero notifications.
 
-Email/Discord remain preference/delivery targets only; no external delivery adapter is connected yet.
+Notification delivery outbox is now live:
+
+- IN_APP deliveries are recorded as SENT immediately;
+- selected EMAIL/DISCORD channels are recorded as WAITING_ADAPTER;
+- delivery rows are tenant/user isolated;
+- `@linkedin-os/notifications` provides a provider-neutral registry with health/fallback behavior.
+
+Email/Discord external providers are still not connected, so no external notification is claimed as delivered.
 
 ## Network / prospecting
 
@@ -85,6 +92,18 @@ Built:
 - prospect adapter registry with health checks, normalization, LinkedIn URL cleanup, dedupe and bounded result sizes.
 
 No LinkedIn scraping or outbound action is performed by candidate staging/promotion.
+
+Connection Review is now executable in prepare-only mode:
+
+- consumes staged STRONG_FIT / GOOD_FIT candidates;
+- reconciles/promotes them into CRM;
+- skips Do Not Contact and already INVITED/CONNECTED relationships;
+- requires an exact LinkedIn profile URL before preparing a connection action;
+- creates stable-idempotency `SEND_CONNECTION / PENDING / NOT_READY` approvals;
+- leaves `network_state` factual and never sets INVITED before verified completion;
+- exposes the run directly from the Network screen.
+
+Rollback tests passed for DNC skipping, no INVITED mutation, one pending approval, idempotent reruns and the queued workflow processor.
 
 A real licensed B2B discovery provider is still not connected.
 
@@ -148,6 +167,8 @@ Passed:
 - approval invalidation/idempotency;
 - notification preference isolation;
 - in-app notification isolation;
+- notification delivery outbox isolation and channel-state fan-out;
+- Connection Review DNC/idempotency/network-state invariants;
 - Zernio credential/sync role checks;
 - team invite acceptance/email checks;
 - official OAuth non-admin denial;
@@ -177,7 +198,7 @@ The final v1.6 documentation/version head must also pass CI/Vercel before being 
 - create/configure LinkedIn Developer App credentials in Vercel and run first official identity OAuth;
 - verify a real member author URN + publishing transport before registering direct official publishing;
 - connect a licensed B2B prospect-data provider to the provider-neutral Network adapter;
-- add Email/Discord notification delivery adapters if desired;
+- connect Email/Discord notification delivery providers to the existing outbox/adapter registry if desired;
 - prepare/submit Community Management API application;
 - authenticated end-to-end browser QA;
 - backup/restore rehearsal.
