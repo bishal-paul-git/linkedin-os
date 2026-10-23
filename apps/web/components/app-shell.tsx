@@ -1,6 +1,6 @@
 import Link from"next/link";import type{ReactNode}from"react";import{selectWorkspaceAction,signOutAction}from"@/app/actions";
 const nav=[
-["/dashboard","Action Centre"],["/inbox","Inbox"],["/contacts","Contacts"],["/tasks","Tasks"],
+["/dashboard","Action Centre"],["/inbox","Inbox"],["/network","Network"],["/contacts","Contacts"],["/tasks","Tasks"],
 ["/opportunities","Opportunities"],["/approvals","Approvals"],["/content","Content"],["/analytics","Analytics"],
 ["/notifications","Notifications"],["/workflows","Workflows"],["/integrations","Integrations"],["/security","Security"],["/settings","Settings"]
 ];
