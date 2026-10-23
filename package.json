@@ -1,5 +1,5 @@
 {
-  "name":"linkedin-os","version":"1.5.0","private":true,"type":"module",
+  "name":"linkedin-os","version":"1.6.0","private":true,"type":"module",
   "workspaces":["packages/*","apps/*"],
   "scripts":{
     "typecheck":"tsc -p tsconfig.json --noEmit",
