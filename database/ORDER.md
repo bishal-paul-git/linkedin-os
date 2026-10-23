@@ -23,6 +23,7 @@ For a fresh environment apply:
 19. `017_notification_preferences.sql`
 20. `018_team_invitations.sql`
 21. `019_fix_team_invitation_acceptance.sql`
+22. `020_in_app_notifications.sql`
 
 Then run:
 
