@@ -22,6 +22,8 @@ Added:
 - Workspace Settings / tenant Config;
 - Workflows, Integrations and Security views;
 - manual workflow execution;
+- workflow mode/limit editor;
+- editable interval schedule controls;
 - interval schedules and pg_cron workflow processor;
 - assisted/manual completion reconciliation;
 - Zernio provider package;
@@ -34,6 +36,9 @@ Added:
 - LinkedIn Analytics product screen;
 - read-only organization Page comment monitoring and snapshot storage;
 - Zernio publishing/analytics capability registration;
+- per-user notification preferences;
+- public demo dashboard using sample data only;
+- canonical progress/handover + backup/recovery + retention documentation;
 - GitHub CI covering TypeScript, 18 unit tests and the production web build.
 
 Verified:
