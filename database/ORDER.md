@@ -24,6 +24,7 @@ For a fresh environment apply:
 20. `018_team_invitations.sql`
 21. `019_fix_team_invitation_acceptance.sql`
 22. `020_in_app_notifications.sql`
+23. `021_prospect_candidate_staging.sql`
 
 Then run:
 
