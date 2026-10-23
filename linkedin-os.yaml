@@ -1,6 +1,6 @@
-version: 1.5.0
+version: 1.6.0
 name: linkedin-os
-description: Multi-tenant LinkedIn relationship operating system with live Supabase backend, auth, dashboard, approvals, scheduling and capability-aware execution.
+description: Multi-tenant LinkedIn relationship operating system with live Supabase backend, team workspaces, notifications, prospect staging, approvals, scheduling and capability-aware adapters.
 
 entrypoints:
   system: SYSTEM.md
@@ -18,6 +18,12 @@ database:
   app_rpcs_scheduler: database/006_app_rpcs_and_scheduler.sql
   execution_rpcs: database/007_execution_rpcs.sql
   workflow_processor: database/008_internal_workflow_processor.sql
+  notification_preferences: database/017_notification_preferences.sql
+  team_invitations: database/018_team_invitations.sql
+  team_invitation_fix: database/019_fix_team_invitation_acceptance.sql
+  notifications: database/020_in_app_notifications.sql
+  prospect_staging: database/021_prospect_candidate_staging.sql
+  linkedin_official_oauth: database/022_linkedin_official_oauth.sql
   seeds: database/seed-workflows.sql
   rls: database/rls.sql
   tests:
@@ -28,6 +34,9 @@ packages:
   core: packages/core
   server: packages/server
   supabase: packages/supabase
+  zernio: packages/zernio
+  linkedin_official: packages/linkedin-official
+  prospecting: packages/prospecting
   web: apps/web
 
 runtime:
@@ -44,6 +53,8 @@ state:
 implementation:
   tenant_rls: enabled_and_tested
   auth_onboarding: built
+  team_invitations: built_and_tested
+  workspace_switching: built
   dashboard: built
   contacts_memory: built
   opportunities: built
@@ -51,12 +62,19 @@ implementation:
   workflows: built
   scheduler: built
   internal_processor: built
+  notification_preferences: built
+  in_app_notifications: built_and_tested
   integration_registry: built
   capability_registry: built
   supabase_repository: built
   security_dashboard: built
   assisted_execution: built
-  external_api_adapters: intentionally_later
+  zernio_adapter: built_credential_blocked
+  prospect_staging: built_and_tested
+  prospect_adapter_registry: built_and_tested
+  official_linkedin_oauth: built_credential_blocked
+  official_member_publishing: code_ready_identity_not_verified
+  external_api_adapters: hybrid_built
 
 external_actions_default: approval_required
 tenant_isolation_required: true
