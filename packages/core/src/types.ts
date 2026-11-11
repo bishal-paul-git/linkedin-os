@@ -2,6 +2,7 @@ export type TenantId = string;
 
 export type CapabilityMode =
   | "AVAILABLE_OFFICIAL"
+  | "AVAILABLE_PROVIDER"
   | "AVAILABLE_ASSISTED"
   | "AVAILABLE_BROWSER_READ"
   | "RESTRICTED_PARTNER"
@@ -88,6 +89,7 @@ export type ExecutionReasonCode =
   | "NOT_APPROVED"
   | "RUN_CONTROL_BLOCK"
   | "OFFICIAL_ADAPTER"
+  | "PROVIDER_ADAPTER"
   | "ASSISTED_ACTION"
   | "PARTNER_RESTRICTED"
   | "CAPABILITY_UNAVAILABLE";

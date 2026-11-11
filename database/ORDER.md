@@ -28,6 +28,9 @@ For a fresh environment apply:
 24. `022_linkedin_official_oauth.sql`
 25. `023_connection_review_processor.sql`
 26. `024_notification_delivery_outbox.sql`
+27. `025_swarmhit_integration.sql`
+28. `026_swarmhit_webhooks.sql`
+29. `027_swarmhit_run_control.sql`
 
 Then run:
 

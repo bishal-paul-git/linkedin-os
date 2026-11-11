@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased — SwarmHit full system (branch `swarmhit-full-system`)
+
+Code complete, not live. No LinkedIn action was sent and no credential was used.
+
+Added:
+
+- `@linkedin-os/swarmhit` — full SwarmHit REST client (OpenAPI v1.25.0), LinkedIn adapter (SEND_CONNECTION / SEND_DM / REPLY_DM / COMMENT / REACT), prospect adapter, in-memory rate budget, HMAC-SHA256 webhook verification;
+- `AVAILABLE_PROVIDER` capability mode and resolver branch (never `AVAILABLE_OFFICIAL`);
+- migrations 025–027 — `li_swarmhit_senders`, `li_swarmhit_usage`, webhook delivery log with dedupe, `li_run_control.swarmhit_enabled`, sync / opt-in / usage RPCs;
+- server `SwarmhitAdapterRegistry` + prospect registration and Supabase config resolver;
+- webhook Edge Function `supabase/functions/swarmhit-webhook` with checkpoint auto-pause;
+- web app SwarmHit Integrations card, API-key form, sync and opt-in toggle;
+- `database/tests/003_swarmhit.sql` smoke checks.
+
+Verified:
+
+- **82/82 unit tests pass** (was 30/30 on v1.6.0);
+- strict TypeScript passes;
+- Next.js production build passes.
+
+Still needs the user's access, in order: apply migrations 025–027, start the 7-day trial (card, temporary $16.90 hold), connect 1 LinkedIn sender (login + 2FA), create and Vault-store the `swh_live_…` API key, deploy the webhook function, then a 1-invite + 1-DM approval-gated test.
+
 ## 1.6.0
 
 Team/workspace, notification, Network/prospecting and official LinkedIn adapter foundation.

@@ -99,6 +99,25 @@ export function resolveExecution(input: {
     };
   }
 
+  // A third-party provider (e.g. SwarmHit) is only resolved when a
+  // capability record explicitly says AVAILABLE_PROVIDER for this tenant,
+  // with canExecute and a healthy adapter, and no user action required.
+  // It is never treated as AVAILABLE_OFFICIAL.
+  const provider = candidates
+    .filter((c) => c.mode === "AVAILABLE_PROVIDER" && c.canExecute && !c.requiresUserAction && c.health === "HEALTHY")
+    .sort((a, b) => (a.adapter ?? "").localeCompare(b.adapter ?? ""))[0];
+
+  if (provider) {
+    return {
+      allowed: true,
+      mode: "AVAILABLE_PROVIDER",
+      adapter: provider.adapter,
+      requiresUserAction: false,
+      reason: "Healthy explicitly opted-in provider adapter available.",
+      reasonCode: "PROVIDER_ADAPTER",
+    };
+  }
+
   const assisted = candidates
     .filter((c) => c.mode === "AVAILABLE_ASSISTED" && c.health !== "UNAVAILABLE")
     .sort((a, b) => (a.adapter ?? "").localeCompare(b.adapter ?? ""))[0];

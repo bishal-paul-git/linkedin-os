@@ -34,6 +34,7 @@ https://github.com/bishal-paul-git/linkedin-os
 - workflow editor + schedules + pg_cron processor
 - integration/capability registries
 - Zernio provider package with Vault credentials and read-sync layers
+- SwarmHit provider package (`@linkedin-os/swarmhit`, branch `swarmhit-full-system`) — invites, DMs, InMail, warm-ups, campaigns, inbox, lead import and database search behind the approval gate, with migrations 025–027, server/web wiring and a webhook Edge Function (code complete, NOT live until trial + sender + API key)
 - official LinkedIn self-service package with OAuth/OIDC scaffold
 - provider-neutral prospecting package
 - concrete Supabase repository adapter
@@ -83,6 +84,16 @@ No adapter bypasses Run Control, exact approval or security blockers.
 ### Zernio
 
 Built, but the deployed product still needs its own dedicated REST key before the first live product sync.
+
+### SwarmHit
+
+Built on branch `swarmhit-full-system`, not in the v1.6.0 release yet.
+SwarmHit is a third-party provider, never the official LinkedIn API:
+it registers as `AVAILABLE_PROVIDER` only after explicit tenant
+opt-in. DMs and connection invites are NOT live until the user
+starts the 7-day trial, connects 1 LinkedIn sender, and saves the
+`swh_live_…` API key in Vault. See `packages/swarmhit/README.md`
+and `docs/CURRENT_STATUS.md`.
 
 ### LinkedIn official
 

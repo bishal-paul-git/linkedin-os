@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@linkedin-os/core": "file:../core"
+    "@linkedin-os/core": "file:../core",
+    "@linkedin-os/prospecting": "file:../prospecting",
+    "@linkedin-os/swarmhit": "file:../swarmhit"
   }
 }

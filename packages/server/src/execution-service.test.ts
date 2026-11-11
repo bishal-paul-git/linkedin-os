@@ -102,3 +102,41 @@ test("adapter exceptions become FAILED instead of leaving RUNNING", async () => 
     true,
   );
 });
+
+test("APPROVED SEND_CONNECTION executes through an AVAILABLE_PROVIDER swarmhit adapter with no ExecutionService change", async () => {
+  const providerCapability: Capability = {
+    tenantId: "t1",
+    capability: "SEND_CONNECTION",
+    mode: "AVAILABLE_PROVIDER",
+    adapter: "swarmhit",
+    canExecute: true,
+    requiresUserAction: false,
+    health: "HEALTHY",
+    reason: "LinkedIn connection invites via SwarmHit sender acct-1.",
+  };
+  let executed = false;
+  const repos = makeRepos({ listCapabilities: async () => [providerCapability] });
+  const adapters = {
+    get: async (adapterId: string) => {
+      assert.equal(adapterId, "swarmhit");
+      return {
+        id: "swarmhit",
+        tenantId: "t1",
+        listCapabilities: async () => [providerCapability],
+        healthCheck: async () => ({ ok: true }),
+        execute: async () => {
+          executed = true;
+          return { ok: true, result: "Connection request sent through SwarmHit." };
+        },
+      };
+    },
+  };
+
+  const service = new ExecutionService(repos as never, adapters);
+  const result = await service.execute({ tenantId: "t1", approvalId: "a1" });
+
+  assert.equal(executed, true);
+  assert.equal(result.mode, "AVAILABLE_PROVIDER");
+  assert.equal(result.result, "Connection request sent through SwarmHit.");
+  assert.equal(result.requiresUserAction, false);
+});
