@@ -130,6 +130,42 @@ Standalone product blocker:
 
 No LinkedIn post, comment, reaction, DM, connection request or invitation action was sent during these build/review passes.
 
+## SwarmHit
+
+Built on branch `swarmhit-full-system` (code complete, **not live yet**):
+
+- `@linkedin-os/swarmhit` — full REST client (OpenAPI v1.25.0), LinkedIn
+  adapter, prospect adapter, in-memory rate budget, HMAC-SHA256 webhook
+  verification. Grounded in the live OpenAPI, not the older v1.7.0 summary.
+- Capability mode `AVAILABLE_PROVIDER` — SwarmHit is a third-party
+  provider, never `AVAILABLE_OFFICIAL`. Defaults stay
+  `AVAILABLE_ASSISTED` until a tenant explicitly opts in.
+- Supabase migrations 025–027 (not yet applied): `li_swarmhit_senders`,
+  `li_swarmhit_usage`, webhook delivery log with at-least-once dedupe,
+  `li_run_control.swarmhit_enabled`, sync / opt-in / usage RPCs, Vault
+  key storage via the existing `li_set_integration_secret` pattern.
+- Server registry (`SwarmhitAdapterRegistry`, prospect registration) and
+  Supabase config resolver (returns null, never throws, when the
+  migrations are not applied or the tenant has not opted in).
+- Webhook Edge Function `supabase/functions/swarmhit-webhook` — verifies
+  every delivery, dedupes, then writes conversations / activity /
+  contact state; checkpoints auto-pause the sender and raise a
+  security event.
+- Web app Integrations page — SwarmHit card with status, sender list,
+  API-key form (`swh_live_…`), sync and opt-in toggle. The card states
+  plainly that DMs / connection invites are NOT live until the trial,
+  sender and API key are in place.
+- ExecutionService needed no code change: an APPROVED action with an
+  `AVAILABLE_PROVIDER` `swarmhit` capability already resolves and
+  executes through the adapter (covered by a new test).
+
+Still NOT live — needs the user's access, in order: apply migrations
+025–027, start the 7-day trial (card, temporary $16.90 hold), connect
+1 LinkedIn sender, create and Vault-store the `swh_live_…` key, deploy
+the webhook function, then a 1-invite + 1-DM approval-gated test.
+No live SwarmHit call was made and no credential was used during
+this build. Tests: 82/82 pass on the branch (was 30/30 on v1.6.0).
+
 ## LinkedIn Official
 
 Built in code:
@@ -194,6 +230,9 @@ The final v1.6 documentation/version head must also pass CI/Vercel before being 
 
 ## Remaining blockers / next work
 
+- apply SwarmHit migrations 025–027 and deploy the webhook Edge Function;
+- start the SwarmHit 7-day trial (card, temporary $16.90 hold) and connect 1 LinkedIn sender;
+- create the SwarmHit `swh_live_…` API key, store it in Vault, and run the first approval-gated 1-invite + 1-DM test;
 - connect a dedicated Zernio REST key and run first authenticated no-publish product sync;
 - create/configure LinkedIn Developer App credentials in Vercel and run first official identity OAuth;
 - verify a real member author URN + publishing transport before registering direct official publishing;

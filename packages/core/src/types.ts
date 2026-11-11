@@ -2,6 +2,7 @@ export type TenantId = string;
 
 export type CapabilityMode =
   | "AVAILABLE_OFFICIAL"
+  | "AVAILABLE_PROVIDER"
   | "AVAILABLE_ASSISTED"
   | "AVAILABLE_BROWSER_READ"
   | "RESTRICTED_PARTNER"
@@ -63,6 +64,8 @@ export interface RunControl {
   approvalQueue: "ACTIVE" | "PAUSED";
   approvedActionExecutor: "BLOCKED" | "APPROVAL REQUIRED";
   stopOnSecurityWarning: boolean;
+  /** SwarmHit tenant opt-in (li_run_control.swarmhit_enabled, migration 027). */
+  swarmhitEnabled?: boolean;
 }
 
 export interface ApprovalAction {
@@ -88,6 +91,7 @@ export type ExecutionReasonCode =
   | "NOT_APPROVED"
   | "RUN_CONTROL_BLOCK"
   | "OFFICIAL_ADAPTER"
+  | "PROVIDER_ADAPTER"
   | "ASSISTED_ACTION"
   | "PARTNER_RESTRICTED"
   | "CAPABILITY_UNAVAILABLE";

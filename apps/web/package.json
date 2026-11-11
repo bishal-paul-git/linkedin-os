@@ -14,7 +14,8 @@
     "next": "16.4.2",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "@linkedin-os/linkedin-official": "file:../../packages/linkedin-official"
+    "@linkedin-os/linkedin-official": "file:../../packages/linkedin-official",
+    "@linkedin-os/swarmhit": "file:../../packages/swarmhit"
   },
   "devDependencies": {
     "@types/node": "24.9.1",

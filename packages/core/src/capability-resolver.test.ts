@@ -100,3 +100,61 @@ test("run control blocks the action before capability selection", () => {
   });
   assert.equal(result.reasonCode, "RUN_CONTROL_BLOCK");
 });
+
+test("resolves an explicitly opted-in provider adapter, never as OFFICIAL", () => {
+  const capabilities: Capability[] = [
+    {
+      tenantId: "t1",
+      capability: "SEND_CONNECTION",
+      mode: "AVAILABLE_PROVIDER",
+      adapter: "swarmhit",
+      canExecute: true,
+      requiresUserAction: false,
+      health: "HEALTHY",
+      reason: "Tenant opted in to SwarmHit.",
+    },
+  ];
+  const result = resolveExecution({ action, capabilities, runControl: rc });
+  assert.equal(result.allowed, true);
+  assert.equal(result.mode, "AVAILABLE_PROVIDER");
+  assert.equal(result.adapter, "swarmhit");
+  assert.equal(result.reasonCode, "PROVIDER_ADAPTER");
+});
+
+test("does not resolve a provider record that still requires a user action", () => {
+  const capabilities: Capability[] = [
+    {
+      tenantId: "t1",
+      capability: "SEND_CONNECTION",
+      mode: "AVAILABLE_PROVIDER",
+      adapter: "swarmhit",
+      canExecute: true,
+      requiresUserAction: true,
+      health: "HEALTHY",
+    },
+  ];
+  const result = resolveExecution({ action, capabilities, runControl: rc });
+  assert.notEqual(result.mode, "AVAILABLE_PROVIDER");
+  assert.equal(result.allowed, false);
+});
+
+test("an unapproved action is blocked even with a healthy provider", () => {
+  const capabilities: Capability[] = [
+    {
+      tenantId: "t1",
+      capability: "SEND_CONNECTION",
+      mode: "AVAILABLE_PROVIDER",
+      adapter: "swarmhit",
+      canExecute: true,
+      requiresUserAction: false,
+      health: "HEALTHY",
+    },
+  ];
+  const result = resolveExecution({
+    action: { ...action, approvalState: "PENDING" },
+    capabilities,
+    runControl: rc,
+  });
+  assert.equal(result.allowed, false);
+  assert.equal(result.reasonCode, "NOT_APPROVED");
+});

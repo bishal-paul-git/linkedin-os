@@ -81,6 +81,22 @@
 - [ ] first live authenticated no-publish product sync
 - [ ] live key replacement/failure-path test
 
+### SwarmHit
+
+- [x] provider package (`@linkedin-os/swarmhit`) — full REST client, LinkedIn adapter, prospect adapter, rate budget, webhook verification
+- [x] `AVAILABLE_PROVIDER` capability mode (never `AVAILABLE_OFFICIAL`)
+- [x] migrations 025–027 — senders, usage, webhook deliveries, Run Control toggle, sync/opt-in/usage RPCs
+- [x] server adapter + prospect registries, Supabase config resolver
+- [x] webhook Edge Function with dedupe + checkpoint auto-pause
+- [x] web app Integrations card, API-key form, sync + opt-in toggle
+- [x] ExecutionService `AVAILABLE_PROVIDER` test (no service change needed)
+- [ ] apply migrations 025–027 to Supabase
+- [ ] start 7-day trial (card, temporary $16.90 hold) — user only
+- [ ] connect 1 LinkedIn sender (login + 2FA) — user only
+- [ ] create `swh_live_…` API key and store it in Vault
+- [ ] deploy webhook Edge Function with the `whsec_…` secret
+- [ ] first approval-gated live test: 1 invite + 1 DM, limits verified
+
 ### LinkedIn official
 
 - [x] self-service OAuth client
@@ -102,8 +118,8 @@
 
 ## Capabilities still restricted/assisted
 
-- LinkedIn DMs
-- connection requests
+- LinkedIn DMs (provider-gated via SwarmHit once the trial, sender and API key are in place; otherwise assisted)
+- connection requests (provider-gated via SwarmHit once the trial, sender and API key are in place; otherwise assisted)
 - invitation accept/decline
 - exact relationship-state lookup without approved access
 - arbitrary feed reading

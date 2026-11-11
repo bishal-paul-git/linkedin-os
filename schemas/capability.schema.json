@@ -18,6 +18,7 @@
     "mode": {
       "enum": [
         "AVAILABLE_OFFICIAL",
+        "AVAILABLE_PROVIDER",
         "AVAILABLE_ASSISTED",
         "AVAILABLE_BROWSER_READ",
         "RESTRICTED_PARTNER",

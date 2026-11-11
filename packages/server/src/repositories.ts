@@ -37,6 +37,20 @@ export interface PlatformRepositories {
   createDefaultWorkflowSettings(tenantId: TenantId): Promise<void>;
 
   getRunControl(tenantId: TenantId): Promise<RunControl>;
+
+  /**
+   * Best-effort SwarmHit usage recording (migration 027,
+   * li_swarmhit_record_usage). Optional: only the Supabase
+   * repository implements it. Called after a successful SwarmHit
+   * send; a recording failure must never fail the send.
+   */
+  recordSwarmhitUsage?(input: {
+    tenantId: TenantId;
+    accountId: string;
+    kind: "invite" | "message" | "post_comment" | "post_like";
+    resetAt?: string | null;
+  }): Promise<void>;
+
   listCapabilities(tenantId: TenantId): Promise<Capability[]>;
   hasBlockingSecurityEvent(tenantId: TenantId): Promise<boolean>;
 
