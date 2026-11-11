@@ -11,12 +11,13 @@ Added:
 - migrations 025–027 — `li_swarmhit_senders`, `li_swarmhit_usage`, webhook delivery log with dedupe, `li_run_control.swarmhit_enabled`, sync / opt-in / usage RPCs;
 - server `SwarmhitAdapterRegistry` + prospect registration and Supabase config resolver;
 - webhook Edge Function `supabase/functions/swarmhit-webhook` with checkpoint auto-pause;
+- usage recording wired end-to-end: `recordSwarmhitUsage` (`packages/supabase/src/swarmhit.ts`) calls `li_swarmhit_record_usage`, `ExecutionService` records it after every successful SwarmHit send (best-effort, never fails the send), and `RunControl.swarmhitEnabled` is now mapped from `li_run_control.swarmhit_enabled` in the Supabase repository;
 - web app SwarmHit Integrations card, API-key form, sync and opt-in toggle;
 - `database/tests/003_swarmhit.sql` smoke checks.
 
 Verified:
 
-- **82/82 unit tests pass** (was 30/30 on v1.6.0);
+- **88/88 unit tests pass** (was 30/30 on v1.6.0, 82/82 before the usage-wiring follow-up);
 - strict TypeScript passes;
 - Next.js production build passes.
 

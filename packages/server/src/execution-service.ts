@@ -5,6 +5,25 @@ import {
 } from "../../core/src/index.ts";
 import type { PlatformRepositories } from "./repositories.ts";
 
+/** Maps an approval action to the SwarmHit usage kind in migration 027. */
+function swarmhitUsageKind(
+  actionType: string,
+): "invite" | "message" | "post_comment" | "post_like" | null {
+  switch (actionType) {
+    case "SEND_CONNECTION":
+      return "invite";
+    case "SEND_DM":
+    case "REPLY_DM":
+      return "message";
+    case "COMMENT":
+      return "post_comment";
+    case "REACT":
+      return "post_like";
+    default:
+      return null;
+  }
+}
+
 export interface AdapterRegistry {
   get(adapterId: string, tenantId: string): Promise<LinkedInAdapter | null>;
 }
@@ -138,6 +157,33 @@ export class ExecutionService {
         sourceUrl: claimed.targetUrl ?? claimed.targetRef ?? undefined,
         metadata: result.metadata,
       });
+
+      // Best-effort usage recording for SwarmHit sends only, on
+      // success only: today's li_swarmhit_usage row (migration 027).
+      // Never fails the execution — the send already succeeded.
+      if (result.ok && decision.adapter === "swarmhit") {
+        const kind = swarmhitUsageKind(claimed.actionType);
+        const accountId =
+          result.metadata && typeof result.metadata["accountId"] === "string"
+            ? (result.metadata["accountId"] as string)
+            : null;
+        const rateLimit = result.metadata?.["rateLimit"] as
+          | { resetAt?: unknown }
+          | undefined;
+        if (kind && accountId) {
+          try {
+            await this.repos.recordSwarmhitUsage?.({
+              tenantId: input.tenantId,
+              accountId,
+              kind,
+              resetAt:
+                typeof rateLimit?.resetAt === "string" ? rateLimit.resetAt : null,
+            });
+          } catch {
+            // Usage recording is best-effort; ignore failures.
+          }
+        }
+      }
 
       return {
         mode: decision.mode,

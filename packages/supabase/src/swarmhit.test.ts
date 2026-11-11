@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { resolveSwarmhitConfig } from "./swarmhit.ts";
+import {
+  recordSwarmhitUsage,
+  resolveSwarmhitConfig,
+  swarmhitUsageKindForAction,
+} from "./swarmhit.ts";
 
 /**
  * Fake Supabase client: each table maps to one canned { data, error }
@@ -111,4 +115,70 @@ test("reads a paid sender from linkedin_type", async () => {
     accountId: "acct-2",
     isPremium: true,
   });
+});
+
+test("maps approval actions to usage kinds", () => {
+  assert.equal(swarmhitUsageKindForAction("SEND_CONNECTION"), "invite");
+  assert.equal(swarmhitUsageKindForAction("SEND_DM"), "message");
+  assert.equal(swarmhitUsageKindForAction("REPLY_DM"), "message");
+  assert.equal(swarmhitUsageKindForAction("COMMENT"), "post_comment");
+  assert.equal(swarmhitUsageKindForAction("REACT"), "post_like");
+  assert.equal(swarmhitUsageKindForAction("PUBLISH_POST"), null);
+});
+
+test("recordSwarmhitUsage looks up the sender row and calls the RPC", async () => {
+  const rpcCalls: Array<{ name: string; args: Record<string, unknown> }> = [];
+  const client = {
+    ...fakeClient({
+      li_swarmhit_senders: ok({ id: "sender-uuid-1" }),
+    }),
+    rpc: async (name: string, args: Record<string, unknown>) => {
+      rpcCalls.push({ name, args });
+      return { data: { invites_sent: 1 }, error: null };
+    },
+  };
+  const row = await recordSwarmhitUsage(
+    client as never,
+    "t1",
+    "acct-1",
+    "invite",
+    "2026-11-12T00:00:00Z",
+  );
+  assert.deepEqual(row, { invites_sent: 1 });
+  assert.deepEqual(rpcCalls, [
+    {
+      name: "li_swarmhit_record_usage",
+      args: {
+        p_tenant_id: "t1",
+        p_sender_id: "sender-uuid-1",
+        p_kind: "invite",
+        p_reset_at: "2026-11-12T00:00:00Z",
+      },
+    },
+  ]);
+});
+
+test("recordSwarmhitUsage returns null when no sender row matches", async () => {
+  const rpcCalls: Array<unknown> = [];
+  const client = {
+    ...fakeClient({ li_swarmhit_senders: ok(null) }),
+    rpc: async (_name: string, _args: Record<string, unknown>) => {
+      rpcCalls.push(1);
+      return { data: null, error: null };
+    },
+  };
+  const row = await recordSwarmhitUsage(client as never, "t1", "acct-9", "message");
+  assert.equal(row, null);
+  assert.deepEqual(rpcCalls, []);
+});
+
+test("recordSwarmhitUsage returns null when the RPC errors", async () => {
+  const client = {
+    ...fakeClient({
+      li_swarmhit_senders: ok({ id: "sender-uuid-1" }),
+    }),
+    rpc: async () => ({ data: null, error: { message: "sender not found" } }),
+  };
+  const row = await recordSwarmhitUsage(client as never, "t1", "acct-1", "message");
+  assert.equal(row, null);
 });

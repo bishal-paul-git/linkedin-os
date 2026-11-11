@@ -103,6 +103,78 @@ test("adapter exceptions become FAILED instead of leaving RUNNING", async () => 
   );
 });
 
+test("a successful SwarmHit send records today's usage (migration 027)", async () => {
+  const providerCapability: Capability = {
+    tenantId: "t1",
+    capability: "SEND_CONNECTION",
+    mode: "AVAILABLE_PROVIDER",
+    adapter: "swarmhit",
+    canExecute: true,
+    requiresUserAction: false,
+    health: "HEALTHY",
+  };
+  const recorded: Array<Record<string, unknown>> = [];
+  const repos = makeRepos({
+    listCapabilities: async () => [providerCapability],
+    recordSwarmhitUsage: async (input: Record<string, unknown>) => {
+      recorded.push(input);
+    },
+  });
+  const adapters = {
+    get: async () => ({
+      id: "swarmhit",
+      tenantId: "t1",
+      listCapabilities: async () => [providerCapability],
+      healthCheck: async () => ({ ok: true }),
+      execute: async () => ({
+        ok: true,
+        result: "Connection request sent through SwarmHit.",
+        metadata: { adapter: "swarmhit", accountId: "acct-1" },
+      }),
+    }),
+  };
+
+  const service = new ExecutionService(repos as never, adapters);
+  const result = await service.execute({ tenantId: "t1", approvalId: "a1" });
+
+  assert.equal(result.mode, "AVAILABLE_PROVIDER");
+  assert.deepEqual(recorded, [
+    { tenantId: "t1", accountId: "acct-1", kind: "invite", resetAt: null },
+  ]);
+});
+
+test("a failed SwarmHit send records no usage", async () => {
+  const providerCapability: Capability = {
+    tenantId: "t1",
+    capability: "SEND_CONNECTION",
+    mode: "AVAILABLE_PROVIDER",
+    adapter: "swarmhit",
+    canExecute: true,
+    requiresUserAction: false,
+    health: "HEALTHY",
+  };
+  const recorded: Array<Record<string, unknown>> = [];
+  const repos = makeRepos({
+    listCapabilities: async () => [providerCapability],
+    recordSwarmhitUsage: async (input: Record<string, unknown>) => {
+      recorded.push(input);
+    },
+  });
+  const adapters = {
+    get: async () => ({
+      id: "swarmhit",
+      tenantId: "t1",
+      listCapabilities: async () => [providerCapability],
+      healthCheck: async () => ({ ok: true }),
+      execute: async () => ({ ok: false, result: "Rate limited." }),
+    }),
+  };
+
+  const service = new ExecutionService(repos as never, adapters);
+  await service.execute({ tenantId: "t1", approvalId: "a1" });
+  assert.deepEqual(recorded, []);
+});
+
 test("APPROVED SEND_CONNECTION executes through an AVAILABLE_PROVIDER swarmhit adapter with no ExecutionService change", async () => {
   const providerCapability: Capability = {
     tenantId: "t1",

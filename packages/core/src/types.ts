@@ -64,6 +64,8 @@ export interface RunControl {
   approvalQueue: "ACTIVE" | "PAUSED";
   approvedActionExecutor: "BLOCKED" | "APPROVAL REQUIRED";
   stopOnSecurityWarning: boolean;
+  /** SwarmHit tenant opt-in (li_run_control.swarmhit_enabled, migration 027). */
+  swarmhitEnabled?: boolean;
 }
 
 export interface ApprovalAction {

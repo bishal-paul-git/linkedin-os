@@ -111,3 +111,72 @@ export async function resolveSwarmhitConfig(
     return null;
   }
 }
+
+/**
+ * Usage kinds accepted by li_swarmhit_record_usage (migration 027).
+ * Same vocabulary as the adapter's rate-budget kinds and the SQL
+ * comment in 027: invite = sendConnection, message = sendDirectMessage,
+ * post_comment = commentPost, post_like = likePost.
+ */
+export type SwarmhitUsageKind = "invite" | "message" | "post_comment" | "post_like";
+
+export function swarmhitUsageKindForAction(
+  actionType: string,
+): SwarmhitUsageKind | null {
+  switch (actionType) {
+    case "SEND_CONNECTION":
+      return "invite";
+    case "SEND_DM":
+    case "REPLY_DM":
+      return "message";
+    case "COMMENT":
+      return "post_comment";
+    case "REACT":
+      return "post_like";
+    default:
+      return null;
+  }
+}
+
+/**
+ * Record one successfully sent SwarmHit action against today's
+ * per-sender usage row via li_swarmhit_record_usage (migration 027).
+ *
+ * The RPC needs the li_swarmhit_senders row id (a uuid), not the
+ * SwarmHit account id, so the sender row is looked up first by
+ * swarmhit_account_id. Best-effort by design: it never throws, and
+ * returns null when the sender is unknown, the RPC errors, or
+ * migrations 025–027 are not applied. A usage-recording failure
+ * must never fail a send that already succeeded.
+ */
+export async function recordSwarmhitUsage(
+  client: SupabaseClient,
+  tenantId: string,
+  accountId: string,
+  kind: SwarmhitUsageKind,
+  resetAt?: string | null,
+): Promise<Row | null> {
+  try {
+    const sender = await client
+      .from("li_swarmhit_senders")
+      .select("id")
+      .eq("tenant_id", tenantId)
+      .eq("swarmhit_account_id", accountId)
+      .maybeSingle();
+    const senderId = sender.error
+      ? null
+      : text((sender.data ?? {}) as Row, "id");
+    if (!senderId) return null;
+
+    const recorded = await client.rpc("li_swarmhit_record_usage", {
+      p_tenant_id: tenantId,
+      p_sender_id: senderId,
+      p_kind: kind,
+      p_reset_at: resetAt ?? null,
+    });
+    if (recorded.error) return null;
+    return (recorded.data ?? null) as Row | null;
+  } catch {
+    return null;
+  }
+}
